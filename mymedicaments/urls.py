@@ -5,6 +5,6 @@ from mymedicaments import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    # url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
+    path('accounts/', include('django.contrib.auth.urls')),
     url(r'^$', views.home, name='home'),
 ]
