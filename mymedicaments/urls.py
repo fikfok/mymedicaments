@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^login/$', LoginView.as_view(template_name='registration/login.html'), name="login"),
     url(r'^logout/$', LogoutView.as_view(template_name='registration/logout.html'), name="logout"),
     url(r'^$', views.home, name='home'),
+    url(r'^api/get_medicaments/$', views.get_medicaments, name='get_medicaments'),
 ]

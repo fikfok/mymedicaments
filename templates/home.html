@@ -5,6 +5,7 @@
 
     {% if user.is_authenticated %}
         <p>Hi {{ user.username }}!</p>
+        {% include 'medicaments_table.html' %}
         <a href="{% url 'logout' %}">logout</a>
     {% else %}
         <p>You are not logged in</p>

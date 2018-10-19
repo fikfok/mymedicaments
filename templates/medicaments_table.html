@@ -1,0 +1,19 @@
+<div class="col-md-10">
+    <div class="row">
+        <table id="medicaments-table" class="display" style="width:100%"></table>
+    </div>
+</div>
+
+
+<script>
+    $.get("{% url 'get_medicaments' %}", function(response){
+        console.log(response);
+        $('#medicaments-table').DataTable({
+            data: response,
+            columns: [
+                { data: 'name' },
+                { data: 'price' }
+            ]
+        });
+    })
+</script>
