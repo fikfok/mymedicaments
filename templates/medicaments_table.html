@@ -1,6 +1,6 @@
-<div class="col-md-10">
+<div class="col-md-12">
     <div class="row">
-        <table id="medicaments-table" class="display" style="width:100%"></table>
+        <table id="medicaments-table" class="display compact table-bordered" style="width:100%"></table>
     </div>
 </div>
 
@@ -11,9 +11,17 @@
         $('#medicaments-table').DataTable({
             data: response,
             columns: [
-                { data: 'name' },
-                { data: 'price' }
-            ]
+                { title: 'Название' },
+                { title: 'Цена' },
+                { title: 'Фото', render: function(data, type, row) {
+                    return '<img src="'+data+'" />';
+                }
+                }
+            ],
+{#            paging: false,#}
+{#            ordering: false,#}
+            info: false,
+            bSortClasses: false, /*Запрет подсветки отсортированной колонки*/
         });
     })
 </script>

@@ -10,5 +10,12 @@ def home(request):
 
 def get_medicaments(request):
     medicaments = Medicament.objects.filter(author=request.user)
-    data = [{'name': item.name, 'price': item.price} for item in medicaments]
+    data = [
+        [
+            item.name,
+            item.price,
+            item.photo.path
+        ]
+        for item in medicaments
+    ]
     return JsonResponse(data, safe=False)
