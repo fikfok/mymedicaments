@@ -7,14 +7,13 @@
 
 <script>
     $.get("{% url 'get_medicaments' %}", function(response){
-        console.log(response);
         $('#medicaments-table').DataTable({
             data: response,
             columns: [
                 { title: 'Название' },
                 { title: 'Цена' },
                 { title: 'Фото', render: function(data, type, row) {
-                    return '<img src="'+data+'" />';
+                    return '<img src="' + data + '"  height="50" width="50"/>';
                 }
                 }
             ],

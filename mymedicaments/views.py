@@ -9,12 +9,14 @@ def home(request):
 
 
 def get_medicaments(request):
+    base_url = request.build_absolute_uri().replace(request.get_full_path(), '')
+
     medicaments = Medicament.objects.filter(author=request.user)
     data = [
         [
             item.name,
             item.price,
-            item.photo.path
+            base_url + item.photo.url
         ]
         for item in medicaments
     ]
