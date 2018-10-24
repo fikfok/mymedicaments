@@ -1,0 +1,48 @@
+{% csrf_token %}
+
+<div class="col-md-12">
+    <div class="row">
+        {% include 'incl_modal_create_new_medicament.html' %}
+        <button id="add-new-medicament" class="btn btn-success btn-sm" data-toggle="modal" data-target="#exampleModal">Добавить медикамент</button>
+    </div>
+    <div class="row top-buffer">
+        <table id="medicaments-table" class="display compact table-bordered" style="width:100%"></table>
+    </div>
+</div>
+
+<script>
+    var buttonDeleteRow = '<button type="button" class="btn btn-danger btn-sm">Израсх.</button>';
+
+    $('#medicaments-table').on( 'click', 'button', function () {
+
+    });
+
+    $('#add-new-medicament').on( 'click', function () {
+
+
+        $('#medicaments-table').DataTable().ajax.reload();
+    });
+
+    $('#medicaments-table').DataTable({
+        ajax: "{% url 'get_medicaments' %}",
+        columns: [
+            { title: 'Название' },
+            { title: 'Цена' },
+            { title: 'Фото', render: function(data, type, row) {
+                    return '<img src="' + data + '"  height="50" width="50"/>';
+                }
+            },
+            {
+                title: 'Израсходован',
+                targets: -1,
+                data: null,
+                defaultContent: buttonDeleteRow
+            }
+        ],
+{#            paging: false,#}
+{#            ordering: false,#}
+        info: false,
+        bSortClasses: false,
+        select: true,
+        });
+</script>
