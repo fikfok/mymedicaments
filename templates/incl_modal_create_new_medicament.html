@@ -1,44 +1,95 @@
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Создание нового медикамента</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="post">
+            <form action="{% url 'save_medicament' %}" method="post" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Создание нового медикамента</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% csrf_token %}
                     <table class="table table-borderless table-sm" id="table-form">
-
                         <tbody>
                             <tr>
                                 <td>Название:</td>
                                 <td>
-                                    <input type="text" id='medicament-name' class="form-control form-control-sm">
+                                    <input type="text" id='medicament-name' class="form-control form-control-sm" name="medicament-name">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Цена:</td>
                                 <td>
-                                    <input type="text" id='medicament-name' class="form-control form-control-sm">
+                                    <input type="text" id='medicament-price' class="form-control form-control-sm" name="medicament-price">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Фото:</td>
                                 <td>
-                                    <input type="text" id='medicament-name' class="form-control form-control-sm">
+                                    <input id="medicament-photo" type="file" name="image" accept="image/*" capture>
+                                    <img id="fotoImg" style="visibility: hidden; width: 200px; height: 200px">
                                 </td>
                             </tr>
 
                         </tbody>
                     </table>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                <button type="button" class="btn btn-primary">Сохранить</button>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <button type="submit" class="btn btn-primary" id="save-medicament" value="save-medicament">Сохранить</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
+<script>
+{#    -------------------------------------#}
+{#    Сохранение снимка#}
+    oFReader = new FileReader();
+
+    oFReader.onload = function (oFREvent) {
+        document.getElementById("fotoImg").src = oFREvent.target.result;
+        document.getElementById("fotoImg").style.visibility = "visible";
+        var screenHeight = screen.availHeight;
+        screenHeight = screenHeight - 220;
+        document.getElementById("fotoImg").style.height = screenHeight;
+    };
+
+    $("input:file").change(function (){
+        var input = document.querySelector('input[type=file]');
+        var oFile = input.files[0];
+        oFReader.readAsDataURL(oFile);
+    });
+{#    -------------------------------------#}
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            var key = document.querySelector("[name=csrfmiddlewaretoken]").value;
+            xhr.setRequestHeader('X-CSRFToken', key);
+        }
+    });
+
+    $('#save-medicament').on('click', function( event ) {
+        event.preventDefault();
+        var data = new FormData();
+        data.append('name', $('#medicament-name').val());
+        data.append('price', $('#medicament-price').val());
+        data.append('photo', $("#medicament-photo")[0].files[0]);
+
+        $.ajax({
+            method:'POST',
+            url: "{% url 'save_medicament' %}",
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function(resp){
+                console.log(resp, JSON.stringify(data));
+            },
+            error: function(resp) {
+                console.log('Ajax Error', r);
+            }
+        });
+    });
+</script>
