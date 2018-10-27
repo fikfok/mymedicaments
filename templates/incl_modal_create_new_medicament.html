@@ -85,7 +85,8 @@
             processData: false,
             contentType: false,
             success: function(resp){
-                console.log(resp, JSON.stringify(data));
+                $('#exampleModal').hide()
+                $('.modal-backdrop').hide();
             },
             error: function(resp) {
                 console.log('Ajax Error', r);
