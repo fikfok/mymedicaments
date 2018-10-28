@@ -23,9 +23,9 @@
     $('#medicaments-table').DataTable({
         ajax: "{% url 'get_medicaments' %}",
         columns: [
-            { title: 'Название' },
-            { title: 'Цена' },
-            { title: 'Фото', render: function(data, type, row) {
+            {title: 'Название'},
+            {title: 'Цена'},
+            {title: 'Фото', render: function(data, type, row) {
                     return '<img src="' + data + '"  height="50" width="50"/>';
                 }
             },
@@ -34,13 +34,15 @@
                 targets: -1,
                 data: null,
                 defaultContent: buttonDeleteRow
-            }
+            },
+            {title: 'Дата создания'}
         ],
 {#            paging: false,#}
 {#            ordering: false,#}
         info: false,
         bSortClasses: false,
         select: true,
+        aaSorting: []
         });
 
 

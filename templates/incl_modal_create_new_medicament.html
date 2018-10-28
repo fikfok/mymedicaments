@@ -1,7 +1,7 @@
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="{% url 'save_medicament' %}" method="post" enctype="multipart/form-data">
+            <form action="{% url 'save_medicament' %}" method="post" enctype="multipart/form-data" id="create-medicament-form">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Создание нового медикамента</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -28,7 +28,7 @@
                                 <td>Фото:</td>
                                 <td>
                                     <input id="medicament-photo" type="file" name="image" accept="image/*" capture>
-                                    <img id="fotoImg" style="visibility: hidden; width: 200px; height: 200px">
+                                    <img id="fotoImg" style="visibility: hidden; width: 0px; height: 0px">
                                 </td>
                             </tr>
 
@@ -50,6 +50,8 @@
     oFReader = new FileReader();
 
     oFReader.onload = function (oFREvent) {
+        document.getElementById("fotoImg").style.width = '200px';
+        document.getElementById("fotoImg").style.height = '200px';
         document.getElementById("fotoImg").src = oFREvent.target.result;
         document.getElementById("fotoImg").style.visibility = "visible";
         var screenHeight = screen.availHeight;
@@ -87,6 +89,12 @@
             success: function(resp){
                 $('#exampleModal').hide()
                 $('.modal-backdrop').hide();
+                $('#medicaments-table').DataTable().ajax.reload();
+                $('#create-medicament-form')[0].reset();
+                $('#fotoImg').attr('src', '');
+                $('#fotoImg').attr('visibility', 'hidden');
+                $('#fotoImg').attr('width', '0px');
+                $('#fotoImg').attr('height', '0px');
             },
             error: function(resp) {
                 console.log('Ajax Error', r);

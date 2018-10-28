@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http.response import JsonResponse
 from django.shortcuts import render
+from django.db.models import Func, F
 
 from mymedicaments.models import Medicament
 from mymedicaments.forms import MedicamentForm
@@ -17,13 +18,17 @@ def home(request):
 def get_medicaments(request):
     base_url = request.build_absolute_uri().replace(request.get_full_path(), '')
 
-    medicaments = Medicament.objects.filter(author=request.user)
+    medicaments = Medicament.objects.\
+        annotate(created_date=Func(F('created_at'), function='DATE')).\
+        filter(author=request.user).order_by('-created_date', 'name')
 
     data = {'data': [
         [
             item.name,
             item.price,
-            base_url + item.photo.url
+            base_url + item.photo.url,
+            None,
+            item.created_date.strftime('%d.%m.%Y')
         ]
         for item in medicaments
     ]}
