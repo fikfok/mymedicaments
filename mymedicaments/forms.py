@@ -8,4 +8,4 @@ class MedicamentForm(forms.ModelForm):
 
     class Meta:
         model = Medicament
-        fields = ['name', 'price', 'photo']#, 'author'
+        fields = ['name', 'price', 'photo_face']

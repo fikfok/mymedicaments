@@ -52,7 +52,7 @@ def save_medicament(request):
 
         form = MedicamentForm(request.POST)
         medicament = form.save(commit=False)
-        medicament.photo = file_name + ext
+        medicament.photo_face = file_name + ext
         medicament.author = request.user
         medicament.save()
     return JsonResponse({}, safe=False)

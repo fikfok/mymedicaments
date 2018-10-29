@@ -36,7 +36,7 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-window-creation">Закрыть</button>
                     <button type="submit" class="btn btn-primary" id="save-medicament" value="save-medicament">Сохранить</button>
                 </div>
             </form>
@@ -87,14 +87,13 @@
             processData: false,
             contentType: false,
             success: function(resp){
-                $('#exampleModal').hide()
-                $('.modal-backdrop').hide();
+                $('#close-window-creation').click();
                 $('#medicaments-table').DataTable().ajax.reload();
                 $('#create-medicament-form')[0].reset();
                 $('#fotoImg').attr('src', '');
-                $('#fotoImg').attr('visibility', 'hidden');
-                $('#fotoImg').attr('width', '0px');
-                $('#fotoImg').attr('height', '0px');
+                $($('#fotoImg')[0]).css('visibility', 'hidden')
+                $($('#fotoImg')[0]).width('0px');
+                $($('#fotoImg')[0]).height('0px');
             },
             error: function(resp) {
                 console.log('Ajax Error', r);

@@ -1,6 +1,5 @@
-from django.conf.urls import url, include
+from django.conf.urls import url
 from django.contrib import admin
-from django.urls import path
 from mymedicaments import views
 from django.contrib.auth.views import LoginView, LogoutView
 from django.conf import settings
