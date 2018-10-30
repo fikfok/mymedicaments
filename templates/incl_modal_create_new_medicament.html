@@ -27,7 +27,14 @@
                             <tr>
                                 <td>Фото:</td>
                                 <td>
-                                    <input id="medicament-photo" type="file" name="image" accept="image/*" capture>
+                                    <input id="medicament-photo-face" type="file" name="image" accept="image/*" capture>
+                                    <img id="fotoImg" style="visibility: hidden; width: 0px; height: 0px">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Категория:</td>
+                                <td>
+                                    <input id="medicament-category" type="file" name="image" accept="image/*" capture>
                                     <img id="fotoImg" style="visibility: hidden; width: 0px; height: 0px">
                                 </td>
                             </tr>
@@ -78,7 +85,7 @@
         var data = new FormData();
         data.append('name', $('#medicament-name').val());
         data.append('price', $('#medicament-price').val());
-        data.append('photo', $("#medicament-photo")[0].files[0]);
+        data.append('photo', $("#medicament-photo-face")[0].files[0]);
 
         $.ajax({
             method:'POST',
@@ -99,5 +106,13 @@
                 console.log('Ajax Error', r);
             }
         });
+    });
+
+    $.ajax({
+        type: 'GET',
+        url: "{% url 'get_categories' %}",
+        success: function(response){
+            console.log(response)
+        }
     });
 </script>

@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^api/get_medicaments/$', views.get_medicaments, name='get_medicaments'),
     url(r'^api/save_medicament/$', views.save_medicament, name='save_medicament'),
+    url(r'^api/get_categories/$', views.get_categories, name='get_categories'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

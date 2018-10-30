@@ -25,17 +25,36 @@
         columns: [
             {title: 'Название'},
             {title: 'Цена'},
-            {title: 'Фото', render: function(data, type, row) {
+            {title: 'Категория'},
+            {title: 'Фото упак.', render: function(data, type, row) {
                     return '<img src="' + data + '"  height="50" width="50"/>';
                 }
             },
+            {title: 'Фото даты', render: function(data, type, row) {
+                    return '<img src="' + data + '"  height="50" width="50"/>';
+                }
+            },
+            {title: 'Фото рец.', render: function(data, type, row) {
+                    return '<img src="' + data + '"  height="50" width="50"/>';
+                }
+            },
+            {title: 'Дата созд.'},
+            {title: 'Годен до'},
+            {title: 'Ком-ий'},
+            {title: 'Статус'},
             {
-                title: 'Израсходован',
+                title: 'Израс-ан',
                 targets: -1,
                 data: null,
                 defaultContent: buttonDeleteRow
             },
-            {title: 'Дата создания'}
+            {
+                title: 'Править',
+                targets: -1,
+                data: null,
+                defaultContent: buttonDeleteRow
+            },
+
         ],
 {#            paging: false,#}
 {#            ordering: false,#}

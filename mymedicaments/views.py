@@ -26,9 +26,15 @@ def get_medicaments(request):
         [
             item.name,
             item.price,
-            base_url + item.photo.url,
-            None,
-            item.created_date.strftime('%d.%m.%Y')
+            item.category,
+            base_url + item.photo_face.url,
+            base_url + item.photo_date.url,
+            base_url + item.photo_recipe.url,
+            item.created_date.strftime('%d.%m.%Y'),
+            item.expiration_date.strftime('%d.%m.%Y'),
+            item.comment,
+            item.status,
+            None
         ]
         for item in medicaments
     ]}
@@ -56,3 +62,9 @@ def save_medicament(request):
         medicament.author = request.user
         medicament.save()
     return JsonResponse({}, safe=False)
+
+
+@login_required
+def get_categories(request):
+    data = Medicament.CATEGORIES
+    return JsonResponse(data, safe=False)
