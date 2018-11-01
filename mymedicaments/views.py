@@ -31,7 +31,7 @@ def get_medicaments(request):
             base_url + item.photo_date.url,
             base_url + item.photo_recipe.url,
             item.created_date.strftime('%d.%m.%Y'),
-            item.expiration_date.strftime('%d.%m.%Y'),
+            item.expiration_date.strftime('%d.%m.%Y') if item.expiration_date else None,
             item.comment,
             item.status,
             None
@@ -66,5 +66,6 @@ def save_medicament(request):
 
 @login_required
 def get_categories(request):
-    data = Medicament.CATEGORIES
+    data = list(Medicament.CATEGORIES)
+    data = sorted(data, key=lambda item: item[1])
     return JsonResponse(data, safe=False)

@@ -34,8 +34,9 @@
                             <tr>
                                 <td>Категория:</td>
                                 <td>
-                                    <input id="medicament-category" type="file" name="image" accept="image/*" capture>
-                                    <img id="fotoImg" style="visibility: hidden; width: 0px; height: 0px">
+                                    <select id="category" name="category">
+{#                                        <option value="-1">Не переопределен</option>#}
+                                    </select>
                                 </td>
                             </tr>
 
@@ -86,6 +87,7 @@
         data.append('name', $('#medicament-name').val());
         data.append('price', $('#medicament-price').val());
         data.append('photo', $("#medicament-photo-face")[0].files[0]);
+        data.append('category', $('#category').val());
 
         $.ajax({
             method:'POST',
@@ -113,6 +115,15 @@
         url: "{% url 'get_categories' %}",
         success: function(response){
             console.log(response)
+            $.each(response, function(key, value) {
+                var selected = '';
+                if (value[1].toLowerCase() === 'пусто') {
+                    selected = 'selected';
+                }
+                $('#category').append('<option value="' + value[0] + '"' + ' ' + selected + '>' + value[1] + '</option>')
+
+
+            })
         }
     });
 </script>
