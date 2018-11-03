@@ -10,6 +10,10 @@ from django.db.models import Func, F
 from mymedicaments.models import Category, Medicament, Status
 from mymedicaments.forms import MedicamentForm
 
+
+PATH = settings.MEDIA_ROOT + '/'
+
+
 def home(request):
     return render(request, 'home.html', context={})
 
@@ -44,21 +48,11 @@ def get_medicaments(request):
 @login_required
 def save_medicament(request):
     if request.method == 'POST':
-        path = settings.MEDIA_ROOT + '/'
-        file_name = str(uuid.uuid4())
-
-        photo_file = request.FILES['photo']
-        path = path + '/'
-        ext = os.path.splitext(photo_file.name)[-1].lower()
-        absolut_path = path + file_name + ext
-        destination = open(absolut_path, 'wb+')
-        for chunk in photo_file.chunks():
-            destination.write(chunk)
-        destination.close()
+        new_photo_face_name = save_photo_file(request_file=request.FILES['photo-face'])
 
         form = MedicamentForm(request.POST)
         medicament = form.save(commit=False)
-        medicament.photo_face = file_name + ext
+        medicament.photo_face = new_photo_face_name
         medicament.author = request.user
         medicament.save()
     return JsonResponse({}, safe=False)
@@ -69,3 +63,16 @@ def get_categories(request):
     data = list(Category.objects.all().order_by('name').values_list('pk', 'name'))
     # data = sorted(data, key=lambda item: item[1])
     return JsonResponse(data, safe=False)
+
+
+def save_photo_file(request_file):
+    file_name = str(uuid.uuid4())
+    photo_face = request_file
+    path = PATH + '/'
+    ext = os.path.splitext(photo_face.name)[-1].lower()
+    absolut_path = path + file_name + ext
+    destination = open(absolut_path, 'wb+')
+    for chunk in photo_face.chunks():
+        destination.write(chunk)
+    destination.close()
+    return file_name + ext

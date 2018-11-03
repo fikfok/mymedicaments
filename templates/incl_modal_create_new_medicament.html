@@ -25,10 +25,24 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>Фото:</td>
+                                <td>Фото упаковки:</td>
                                 <td>
-                                    <input id="medicament-photo-face" type="file" name="image" accept="image/*" capture>
-                                    <img id="fotoImg" style="visibility: hidden; width: 0px; height: 0px">
+                                    <input id="medicament-photo-face" type="file" name="photo-face" accept="image/*" capture>
+                                    <img id="photo-face" style="visibility: hidden; width: 0px; height: 0px">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Фото даты:</td>
+                                <td>
+                                    <input id="medicament-photo-date" type="file" name="photo-date" accept="image/*" capture>
+                                    <img id="photo-date" style="visibility: hidden; width: 0px; height: 0px">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Фото рецепта:</td>
+                                <td>
+                                    <input id="medicament-photo-receipe" type="file" name="photo-receipe" accept="image/*" capture>
+                                    <img id="photo-receipe" style="visibility: hidden; width: 0px; height: 0px">
                                 </td>
                             </tr>
                             <tr>
@@ -58,13 +72,13 @@
     oFReader = new FileReader();
 
     oFReader.onload = function (oFREvent) {
-        document.getElementById("fotoImg").style.width = '200px';
-        document.getElementById("fotoImg").style.height = '200px';
-        document.getElementById("fotoImg").src = oFREvent.target.result;
-        document.getElementById("fotoImg").style.visibility = "visible";
+        document.getElementById("photo-face").style.width = '200px';
+        document.getElementById("photo-face").style.height = '200px';
+        document.getElementById("photo-face").src = oFREvent.target.result;
+        document.getElementById("photo-face").style.visibility = "visible";
         var screenHeight = screen.availHeight;
         screenHeight = screenHeight - 220;
-        document.getElementById("fotoImg").style.height = screenHeight;
+        document.getElementById("photo-face").style.height = screenHeight;
     };
 
     $("input:file").change(function (){
@@ -86,7 +100,7 @@
         var data = new FormData();
         data.append('name', $('#medicament-name').val());
         data.append('price', $('#medicament-price').val());
-        data.append('photo', $("#medicament-photo-face")[0].files[0]);
+        data.append('photo-face', $("#medicament-photo-face")[0].files[0]);
         data.append('category', $('#category').val());
 
         $.ajax({
@@ -99,10 +113,10 @@
                 $('#close-window-creation').click();
                 $('#medicaments-table').DataTable().ajax.reload();
                 $('#create-medicament-form')[0].reset();
-                $('#fotoImg').attr('src', '');
-                $($('#fotoImg')[0]).css('visibility', 'hidden')
-                $($('#fotoImg')[0]).width('0px');
-                $($('#fotoImg')[0]).height('0px');
+                $('#photo-face').attr('src', '');
+                $($('#photo-face')[0]).css('visibility', 'hidden')
+                $($('#photo-face')[0]).width('0px');
+                $($('#photo-face')[0]).height('0px');
             },
             error: function(resp) {
                 console.log('Ajax Error', r);
