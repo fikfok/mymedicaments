@@ -13,6 +13,14 @@
 <script>
     var buttonDeleteRow = '<button type="button" class="btn btn-danger btn-sm">Израсх.</button>';
 
+    var imageTemplateRenderer = function(data, type, row) {
+        var img = '';
+        if (data) {
+            img = '<img src="' + data + '"  height="50" width="50"/>';
+        }
+        return img
+    };
+
     $('#medicaments-table').on( 'click', 'button', function () {
     });
 
@@ -26,17 +34,12 @@
             {title: 'Название'},
             {title: 'Цена'},
             {title: 'Категория'},
-            {title: 'Фото упак.', render: function(data, type, row) {
-                    return '<img src="' + data + '"  height="50" width="50"/>';
-                }
+            {title: 'Фото упак.',
+                render: imageTemplateRenderer
             },
-            {title: 'Фото даты', render: function(data, type, row) {
-                    return '<img src="' + data + '"  height="50" width="50"/>';
-                }
+            {title: 'Фото даты', render: imageTemplateRenderer
             },
-            {title: 'Фото рец.', render: function(data, type, row) {
-                    return '<img src="' + data + '"  height="50" width="50"/>';
-                }
+            {title: 'Фото рец.', render: imageTemplateRenderer
             },
             {title: 'Дата созд.'},
             {title: 'Годен до'},

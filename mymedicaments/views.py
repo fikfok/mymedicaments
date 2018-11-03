@@ -7,7 +7,7 @@ from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.db.models import Func, F
 
-from mymedicaments.models import Medicament
+from mymedicaments.models import Category, Medicament, Status
 from mymedicaments.forms import MedicamentForm
 
 def home(request):
@@ -26,14 +26,14 @@ def get_medicaments(request):
         [
             item.name,
             item.price,
-            item.category,
-            base_url + item.photo_face.url,
-            base_url + item.photo_date.url,
-            base_url + item.photo_recipe.url,
+            item.category.name,
+            base_url + item.photo_face.url if item.photo_face.name else None,
+            base_url + item.photo_date.url if item.photo_date.name else None,
+            base_url + item.photo_recipe.url if item.photo_recipe.name else None,
             item.created_date.strftime('%d.%m.%Y'),
             item.expiration_date.strftime('%d.%m.%Y') if item.expiration_date else None,
             item.comment,
-            item.status,
+            item.status.name,
             None
         ]
         for item in medicaments
@@ -66,6 +66,6 @@ def save_medicament(request):
 
 @login_required
 def get_categories(request):
-    data = list(Medicament.CATEGORIES)
-    data = sorted(data, key=lambda item: item[1])
+    data = list(Category.objects.all().order_by('name').values_list('pk', 'name'))
+    # data = sorted(data, key=lambda item: item[1])
     return JsonResponse(data, safe=False)
