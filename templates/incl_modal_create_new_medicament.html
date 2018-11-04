@@ -27,29 +27,28 @@
                             <tr>
                                 <td>Фото упаковки:</td>
                                 <td>
-                                    <input id="medicament-photo-face" type="file" name="photo-face" accept="image/*" capture>
+                                    <input id="input-photo-face" type="file" name="photo-face" accept="image/*" capture>
                                     <img id="photo-face" style="visibility: hidden; width: 0px; height: 0px">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Фото даты:</td>
                                 <td>
-                                    <input id="medicament-photo-date" type="file" name="photo-date" accept="image/*" capture>
+                                    <input id="input-photo-date" type="file" name="photo-date" accept="image/*" capture>
                                     <img id="photo-date" style="visibility: hidden; width: 0px; height: 0px">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Фото рецепта:</td>
                                 <td>
-                                    <input id="medicament-photo-receipe" type="file" name="photo-receipe" accept="image/*" capture>
-                                    <img id="photo-receipe" style="visibility: hidden; width: 0px; height: 0px">
+                                    <input id="input-photo-recipe" type="file" name="photo-recipe" accept="image/*" capture>
+                                    <img id="photo-recipe" style="visibility: hidden; width: 0px; height: 0px">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Категория:</td>
                                 <td>
                                     <select id="category" name="category">
-{#                                        <option value="-1">Не переопределен</option>#}
                                     </select>
                                 </td>
                             </tr>
@@ -67,25 +66,35 @@
 </div>
 
 <script>
+
+    var makeVisibleImage = function(fileControl, oFREvent) {
+        fileControl.attr('src', oFREvent.target.result);
+        fileControl.css('visibility', 'visible');
+        fileControl.width('200px');
+        fileControl.height('200px');
+    };
+    var makeHiddenInputFile = function(fileControl) {
+        fileControl.attr('src', '');
+        fileControl.css('visibility', 'hidden');
+        fileControl.width('0px');
+        fileControl.height('0px');
+    };
+    var imageChangeHandler = function (){
+        var oFile = this.files[0];
+        oFReader.readAsDataURL(oFile);
+    };
 {#    -------------------------------------#}
 {#    Сохранение снимка#}
     oFReader = new FileReader();
-
     oFReader.onload = function (oFREvent) {
-        document.getElementById("photo-face").style.width = '200px';
-        document.getElementById("photo-face").style.height = '200px';
-        document.getElementById("photo-face").src = oFREvent.target.result;
-        document.getElementById("photo-face").style.visibility = "visible";
-        var screenHeight = screen.availHeight;
-        screenHeight = screenHeight - 220;
-        document.getElementById("photo-face").style.height = screenHeight;
+        makeVisibleImage($('#photo-face'), oFREvent);
+        makeVisibleImage($('#photo-date'), oFREvent);
+        makeVisibleImage($('#photo-recipe'), oFREvent);
     };
 
-    $("input:file").change(function (){
-        var input = document.querySelector('input[type=file]');
-        var oFile = input.files[0];
-        oFReader.readAsDataURL(oFile);
-    });
+    $("#input-photo-face").change(imageChangeHandler);
+    $("#input-photo-date").change(imageChangeHandler);
+    $("#input-photo-recipe").change(imageChangeHandler);
 {#    -------------------------------------#}
 
     $.ajaxSetup({
@@ -100,7 +109,9 @@
         var data = new FormData();
         data.append('name', $('#medicament-name').val());
         data.append('price', $('#medicament-price').val());
-        data.append('photo-face', $("#medicament-photo-face")[0].files[0]);
+        data.append('photo-face', $("#input-photo-face")[0].files[0]);
+        data.append('photo-date', $("#input-photo-date")[0].files[0]);
+        data.append('photo-recipe', $("#input-photo-recipe")[0].files[0]);
         data.append('category', $('#category').val());
 
         $.ajax({
@@ -113,10 +124,9 @@
                 $('#close-window-creation').click();
                 $('#medicaments-table').DataTable().ajax.reload();
                 $('#create-medicament-form')[0].reset();
-                $('#photo-face').attr('src', '');
-                $($('#photo-face')[0]).css('visibility', 'hidden')
-                $($('#photo-face')[0]).width('0px');
-                $($('#photo-face')[0]).height('0px');
+                makeHiddenInputFile($('#photo-face'));
+                makeHiddenInputFile($('#photo-date'));
+                makeHiddenInputFile($('#photo-recipe'));
             },
             error: function(resp) {
                 console.log('Ajax Error', r);
@@ -128,7 +138,6 @@
         type: 'GET',
         url: "{% url 'get_categories' %}",
         success: function(response){
-            console.log(response)
             $.each(response, function(key, value) {
                 var selected = '';
                 if (value[1].toLowerCase() === 'пусто') {

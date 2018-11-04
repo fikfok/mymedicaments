@@ -28,6 +28,8 @@ class Medicament(models.Model):
     price = models.FloatField(verbose_name='Цена', null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=DEFAULT_CATEGORY, verbose_name='Категория', null=True, blank=True)
     expiration_date = models.DateField(verbose_name='Годен до', blank=True, null=True)
+    opening_date = models.DateField(verbose_name='Дата открытия', blank=True, null=True)
+    use_up_date = models.DateField(verbose_name='Израсходовать до', blank=True, null=True)
     status = models.ForeignKey(Status, on_delete=models.CASCADE, default=DEFAULT_STATUS, verbose_name='Статус', blank=True, null=True)
     comment = models.CharField(verbose_name='Комментарий', max_length=500, blank=True, null=True)
     author = models.ForeignKey(to=get_user_model(), on_delete=models.CASCADE, null=True)

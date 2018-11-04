@@ -49,10 +49,14 @@ def get_medicaments(request):
 def save_medicament(request):
     if request.method == 'POST':
         new_photo_face_name = save_photo_file(request_file=request.FILES['photo-face'])
+        new_photo_date_name = save_photo_file(request_file=request.FILES['photo-date'])
+        new_photo_recipe_name = save_photo_file(request_file=request.FILES['photo-recipe'])
 
         form = MedicamentForm(request.POST)
         medicament = form.save(commit=False)
         medicament.photo_face = new_photo_face_name
+        medicament.photo_date = new_photo_date_name
+        medicament.photo_recipe = new_photo_recipe_name
         medicament.author = request.user
         medicament.save()
     return JsonResponse({}, safe=False)
