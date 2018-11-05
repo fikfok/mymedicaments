@@ -4,7 +4,7 @@ import uuid
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http.response import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.db.models import Func, F
 
 from mymedicaments.models import Category, Medicament, Status
@@ -28,6 +28,7 @@ def get_medicaments(request):
 
     data = {'data': [
         [
+            item.pk,
             item.name,
             item.price,
             item.category.name,
@@ -65,8 +66,14 @@ def save_medicament(request):
 @login_required
 def get_categories(request):
     data = list(Category.objects.all().order_by('name').values_list('pk', 'name'))
-    # data = sorted(data, key=lambda item: item[1])
     return JsonResponse(data, safe=False)
+
+
+@login_required
+def mark_as_used(request, medicament_id):
+    medicament = get_object_or_404(Medicament, pk=medicament_id)
+    medicament.status = 2
+    medicament.save()
 
 
 def save_photo_file(request_file):
@@ -80,3 +87,4 @@ def save_photo_file(request_file):
         destination.write(chunk)
     destination.close()
     return file_name + ext
+

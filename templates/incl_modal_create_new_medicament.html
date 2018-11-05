@@ -79,22 +79,34 @@
         fileControl.width('0px');
         fileControl.height('0px');
     };
-    var imageChangeHandler = function (){
-        var oFile = this.files[0];
-        oFReader.readAsDataURL(oFile);
-    };
 {#    -------------------------------------#}
 {#    Сохранение снимка#}
-    oFReader = new FileReader();
-    oFReader.onload = function (oFREvent) {
+    oFReaderPhotoFace = new FileReader();
+    oFReaderPhotoDate = new FileReader();
+    oFReaderPhotoRecipe = new FileReader();
+
+    oFReaderPhotoFace.onload = function (oFREvent) {
         makeVisibleImage($('#photo-face'), oFREvent);
+    };
+    oFReaderPhotoDate.onload = function (oFREvent) {
         makeVisibleImage($('#photo-date'), oFREvent);
+    };
+    oFReaderPhotoRecipe.onload = function (oFREvent) {
         makeVisibleImage($('#photo-recipe'), oFREvent);
     };
 
-    $("#input-photo-face").change(imageChangeHandler);
-    $("#input-photo-date").change(imageChangeHandler);
-    $("#input-photo-recipe").change(imageChangeHandler);
+    $("#input-photo-face").change(function (){
+        var oFile = this.files[0];
+        oFReaderPhotoFace.readAsDataURL(oFile);
+    });
+    $("#input-photo-date").change(function (){
+        var oFile = this.files[0];
+        oFReaderPhotoDate.readAsDataURL(oFile);
+    });
+    $("#input-photo-recipe").change(function (){
+        var oFile = this.files[0];
+        oFReaderPhotoRecipe.readAsDataURL(oFile);
+    });
 {#    -------------------------------------#}
 
     $.ajaxSetup({

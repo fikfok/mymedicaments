@@ -11,7 +11,14 @@
 </div>
 
 <script>
-    var buttonDeleteRow = '<button type="button" class="btn btn-danger btn-sm">Израсх.</button>';
+    var buttonMarkAsUsed = '<button type="button" class="btn btn-danger btn-sm">Израсх.</button>';
+
+
+    $('#medicaments-table').on( 'click', 'button', function () {
+        var currentRow = $(this).closest('tr')[0];
+        var id = $(currentRow).attr('id').replace('id', '');
+        alert( 'Clicked row id '+id );
+    });
 
     var imageTemplateRenderer = function(data, type, row) {
         var img = '';
@@ -21,26 +28,20 @@
         return img
     };
 
-    $('#medicaments-table').on( 'click', 'button', function () {
-    });
-
     $('#add-new-medicament').on( 'click', function () {
 {#        $('#medicaments-table').DataTable().ajax.reload();#}
     });
 
-    $('#medicaments-table').DataTable({
+    var tbl = $('#medicaments-table').DataTable({
         ajax: "{% url 'get_medicaments' %}",
         columns: [
+            {title: 'ID'},
             {title: 'Название'},
             {title: 'Цена'},
             {title: 'Категория'},
-            {title: 'Фото упак.',
-                render: imageTemplateRenderer
-            },
-            {title: 'Фото даты', render: imageTemplateRenderer
-            },
-            {title: 'Фото рец.', render: imageTemplateRenderer
-            },
+            {title: 'Фото упак.', render: imageTemplateRenderer},
+            {title: 'Фото даты', render: imageTemplateRenderer},
+            {title: 'Фото рец.', render: imageTemplateRenderer},
             {title: 'Дата созд.'},
             {title: 'Годен до'},
             {title: 'Ком-ий'},
@@ -49,13 +50,17 @@
                 title: 'Израс-ан',
                 targets: -1,
                 data: null,
-                defaultContent: buttonDeleteRow
+{#                defaultContent: buttonMarkAsUsed#}
+                render: function (data, type, row, meta) {
+{#                    console.log(data, type, row, meta)#}
+                    return buttonMarkAsUsed;
+                }
             },
             {
                 title: 'Править',
                 targets: -1,
                 data: null,
-                defaultContent: buttonDeleteRow
+                defaultContent: buttonMarkAsUsed
             },
 
         ],
@@ -64,8 +69,10 @@
         info: false,
         bSortClasses: false,
         select: true,
-        aaSorting: []
+        aaSorting: [],
+        createdRow: function(nRow, data, dataIndex) {
+            $(nRow).attr('id', 'id' + data[0].toString());
+        }
         });
-
 
 </script>
