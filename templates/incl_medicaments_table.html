@@ -11,13 +11,40 @@
 </div>
 
 <script>
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            var key = document.querySelector("[name=csrfmiddlewaretoken]").value;
+            xhr.setRequestHeader('X-CSRFToken', key);
+        }
+    });
+
     var buttonMarkAsUsed = '<button type="button" class="btn btn-danger btn-sm">Израсх.</button>';
 
 
     $('#medicaments-table').on( 'click', 'button', function () {
         var currentRow = $(this).closest('tr')[0];
         var id = $(currentRow).attr('id').replace('id', '');
-        alert( 'Clicked row id '+id );
+        var data = new FormData();
+        var url = "{% url 'update_medicament' medicament_id=0 %}";
+        url = url.substring(0, url.length - 1) + id.toString();
+
+        data.append('used_up', true);
+
+        $.ajax({
+            method:'PATCH',
+            url: url,
+            data: data,
+            processData: false,
+            contentType: false,
+            success: function(resp){
+                $('#medicaments-table').DataTable().ajax.reload();
+            },
+            error: function(resp) {
+                console.log('Ajax Error', r);
+            }
+        });
+
+
     });
 
     var imageTemplateRenderer = function(data, type, row) {

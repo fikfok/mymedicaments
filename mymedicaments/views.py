@@ -70,7 +70,7 @@ def get_categories(request):
 
 
 @login_required
-def mark_as_used(request, medicament_id):
+def update_medicament(request, medicament_id):
     medicament = get_object_or_404(Medicament, pk=medicament_id)
     medicament.status = 2
     medicament.save()
