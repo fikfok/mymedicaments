@@ -1,3 +1,4 @@
+import json
 import os
 import uuid
 
@@ -5,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http.response import JsonResponse
 from django.shortcuts import render, get_object_or_404
-from django.db.models import Func, F
+from django.db.models import Func, F, Case, Value, When, IntegerField
 
 from mymedicaments.models import Category, Medicament, Status
 from mymedicaments.forms import MedicamentForm
@@ -21,10 +22,16 @@ def home(request):
 @login_required
 def get_medicaments(request):
     base_url = request.build_absolute_uri().replace(request.get_full_path(), '')
-
+    active_status_id = Status.objects.get(name='Активен').pk
     medicaments = Medicament.objects.\
-        annotate(created_date=Func(F('created_at'), function='DATE')).\
-        filter(author=request.user).order_by('-created_date', 'name')
+        annotate(created_date=Func(F('created_at'), function='DATE')). \
+        annotate(
+            new_status=Case(
+                When(status=active_status_id, then=Value(0)),
+                default=Value(1),
+                output_field=IntegerField()
+            )). \
+        filter(author=request.user).order_by('new_status', '-created_date', 'name')
 
     data = {'data': [
         [
@@ -39,6 +46,7 @@ def get_medicaments(request):
             item.expiration_date.strftime('%d.%m.%Y') if item.expiration_date else None,
             item.comment,
             item.status.name,
+            True if item.status_id == active_status_id else False,
             None
         ]
         for item in medicaments
@@ -71,9 +79,13 @@ def get_categories(request):
 
 @login_required
 def update_medicament(request, medicament_id):
-    medicament = get_object_or_404(Medicament, pk=medicament_id)
-    medicament.status = 2
-    medicament.save()
+    if request.method == 'PATCH':
+        medicament = get_object_or_404(Medicament, pk=medicament_id)
+        data = json.loads(request.body.decode("utf-8"))
+        if 'used_up' in data:
+            medicament.status = Status.objects.get(name='Израсходован')
+        medicament.save()
+    return JsonResponse({}, safe=False)
 
 
 def save_photo_file(request_file):
