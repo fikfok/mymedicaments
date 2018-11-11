@@ -51,13 +51,17 @@
     };
 
     $('#add-new-medicament').on( 'click', function () {
-{#        $('#medicaments-table').DataTable().ajax.reload();#}
+        $('#expire-date-picker').data("DateTimePicker").date(new Date());
     });
 
     var tbl = $('#medicaments-table').DataTable({
         ajax: "{% url 'get_medicaments' %}",
         columns: [
-            {title: 'ID'},
+            {
+                title: 'ID',
+                visible: false,
+                searchable: false
+            },
             {title: 'Название'},
             {title: 'Цена'},
             {title: 'Категория'},
@@ -67,7 +71,11 @@
             {title: 'Дата созд.'},
             {title: 'Годен до'},
             {title: 'Ком-ий'},
-            {title: 'Статус'},
+            {
+                title: 'Статус',
+                visible: false,
+                searchable: false
+            },
             {
                 title: 'Flag',
                 visible: false,
@@ -77,10 +85,9 @@
                 title: 'Израс-ан',
                 targets: -1,
                 data: null,
-{#                defaultContent: buttonMarkAsUsed#}
                 render: function (data, type, row, meta) {
                     var status_active = row[11];
-                    return status_active ? buttonMarkAsUsed: '';
+                    return status_active ? buttonMarkAsUsed: row[10];
                 }
             },
             {

@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 import uuid
@@ -31,7 +32,7 @@ def get_medicaments(request):
                 default=Value(1),
                 output_field=IntegerField()
             )). \
-        filter(author=request.user).order_by('new_status', '-created_date', 'name')
+        filter(author=request.user).order_by('new_status', 'name', 'created_date')
 
     data = {'data': [
         [
@@ -57,15 +58,33 @@ def get_medicaments(request):
 @login_required
 def save_medicament(request):
     if request.method == 'POST':
-        new_photo_face_name = save_photo_file(request_file=request.FILES['photo-face'])
-        new_photo_date_name = save_photo_file(request_file=request.FILES['photo-date'])
-        new_photo_recipe_name = save_photo_file(request_file=request.FILES['photo-recipe'])
+        new_photo_face_name = None
+        if request.FILES.get('photo-face'):
+            new_photo_face_name = save_photo_file(request_file=request.FILES['photo-face'])
+
+        new_photo_date_name = None
+        if request.FILES.get('photo-date'):
+            new_photo_date_name = save_photo_file(request_file=request.FILES['photo-date'])
+
+        new_photo_recipe_name = None
+        if request.FILES.get('photo-recipe'):
+            new_photo_recipe_name = save_photo_file(request_file=request.FILES['photo-recipe'])
+
+        expire_date = None
+        if request.POST.get('expire-date'):
+            expire_date = datetime.datetime.strptime(request.POST['expire-date'], "%d.%m.%Y")
 
         form = MedicamentForm(request.POST)
         medicament = form.save(commit=False)
-        medicament.photo_face = new_photo_face_name
-        medicament.photo_date = new_photo_date_name
-        medicament.photo_recipe = new_photo_recipe_name
+        if new_photo_face_name:
+            medicament.photo_face = new_photo_face_name
+        if new_photo_date_name:
+            medicament.photo_date = new_photo_date_name
+        if new_photo_recipe_name:
+            medicament.photo_recipe = new_photo_recipe_name
+        if expire_date:
+            medicament.expiration_date = expire_date
+
         medicament.author = request.user
         medicament.save()
     return JsonResponse({}, safe=False)
