@@ -70,6 +70,8 @@
             {title: 'Фото рец.', render: imageTemplateRenderer},
             {title: 'Дата созд.'},
             {title: 'Годен до'},
+            {title: 'Открыт'},
+            {title: 'Испол-ь до'},
             {title: 'Ком-ий'},
             {
                 title: 'Статус',
@@ -86,8 +88,8 @@
                 targets: -1,
                 data: null,
                 render: function (data, type, row, meta) {
-                    var status_active = row[11];
-                    return status_active ? buttonMarkAsUsed: row[10];
+                    var status_active = row[13];
+                    return status_active ? buttonMarkAsUsed: row[12];
                 }
             },
             {

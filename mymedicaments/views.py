@@ -45,9 +45,12 @@ def get_medicaments(request):
             base_url + item.photo_recipe.url if item.photo_recipe.name else None,
             item.created_date.strftime('%d.%m.%Y'),
             item.expiration_date.strftime('%d.%m.%Y') if item.expiration_date else None,
+            item.opening_date.strftime('%d.%m.%Y') if item.opening_date else None,
+            item.use_up_date.strftime('%d.%m.%Y') if item.use_up_date else None,
             item.comment,
             item.status.name,
             True if item.status_id == active_status_id else False,
+            item.result,
             None
         ]
         for item in medicaments
@@ -74,6 +77,14 @@ def save_medicament(request):
         if request.POST.get('expire-date'):
             expire_date = datetime.datetime.strptime(request.POST['expire-date'], "%d.%m.%Y")
 
+        opening_date = None
+        if request.POST.get('opening-date'):
+            opening_date = datetime.datetime.strptime(request.POST['opening-date'], "%d.%m.%Y")
+
+        use_up_date = None
+        if request.POST.get('use-up-date'):
+            use_up_date = datetime.datetime.strptime(request.POST['use-up-date'], "%d.%m.%Y")
+
         form = MedicamentForm(request.POST)
         medicament = form.save(commit=False)
         if new_photo_face_name:
@@ -84,6 +95,10 @@ def save_medicament(request):
             medicament.photo_recipe = new_photo_recipe_name
         if expire_date:
             medicament.expiration_date = expire_date
+        if opening_date:
+            medicament.opening_date = opening_date
+        if use_up_date:
+            medicament.use_up_date = use_up_date
 
         medicament.author = request.user
         medicament.save()

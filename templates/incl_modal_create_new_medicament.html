@@ -67,6 +67,36 @@
                                     </div>
                                 </td>
                             </tr>
+                            <tr>
+                                <td>Открыт:</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                                <input type='text' class="form-control" id="opening-date-picker" name="opening-date"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Испол-ь до:</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="input-group">
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar"></span>
+                                                </span>
+                                                <input type='text' class="form-control" id="use-up-date-picker" name="use-up-date"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -140,6 +170,8 @@
         data.append('photo-recipe', $("#input-photo-recipe")[0].files[0]);
         data.append('category', $('#category').val());
         data.append('expire-date', $('#expire-date-picker').val());
+        data.append('opening-date', $('#opening-date-picker').val());
+        data.append('use-up-date', $('#use-up-date-picker').val());
 
         $.ajax({
             method:'POST',
@@ -180,4 +212,15 @@
         date: new Date(),
         format: 'DD.MM.YYYY'
     });
+    $('#opening-date-picker').datetimepicker({
+        locale: 'ru',
+        date: new Date(),
+        format: 'DD.MM.YYYY'
+    });
+    $('#use-up-date-picker').datetimepicker({
+        locale: 'ru',
+        date: new Date(),
+        format: 'DD.MM.YYYY'
+    });
+
 </script>

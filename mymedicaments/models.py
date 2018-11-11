@@ -20,6 +20,13 @@ class Status(models.Model):
         return self.name
 
 
+class Result(models.Model):
+    name = models.CharField(verbose_name='Результат приёма', max_length=50)
+
+    def __str__(self):
+        return self.name
+
+
 class Medicament(models.Model):
     name = models.CharField(verbose_name='Название препарата', max_length=500)
     photo_face = models.FileField(verbose_name='Фото упаковки', blank=True, null=True)
@@ -27,6 +34,7 @@ class Medicament(models.Model):
     photo_recipe = models.FileField(verbose_name='Фото рецепта', blank=True, null=True)
     price = models.FloatField(verbose_name='Цена', null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=DEFAULT_CATEGORY, verbose_name='Категория', null=True, blank=True)
+    result = models.ForeignKey(Result, on_delete=models.CASCADE, verbose_name='Результат приёма', null=True, blank=True)
     expiration_date = models.DateField(verbose_name='Годен до', blank=True, null=True)
     opening_date = models.DateField(verbose_name='Дата открытия', blank=True, null=True)
     use_up_date = models.DateField(verbose_name='Израсходовать до', blank=True, null=True)

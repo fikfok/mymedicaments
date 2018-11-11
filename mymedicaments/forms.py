@@ -17,7 +17,10 @@ class MedicamentForm(forms.ModelForm):
             'photo_recipe',
             'expiration_date',
             'comment',
-            'status'
+            'status',
+            'opening_date',
+            'use_up_date',
+            'result',
         ]
         widgets = {
             'status': RadioSelect,
