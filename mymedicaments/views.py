@@ -22,17 +22,34 @@ def home(request):
 
 @login_required
 def get_medicaments(request):
+    ACTIVE = 0
+    NOT_ACTIVE = 1
+
     base_url = request.build_absolute_uri().replace(request.get_full_path(), '')
     active_status_id = Status.objects.get(name='Активен').pk
-    medicaments = Medicament.objects.\
+    active_medicaments = Medicament.objects.\
         annotate(created_date=Func(F('created_at'), function='DATE')). \
         annotate(
             new_status=Case(
-                When(status=active_status_id, then=Value(0)),
-                default=Value(1),
+                When(status=active_status_id, then=Value(ACTIVE)),
+                default=Value(NOT_ACTIVE),
                 output_field=IntegerField()
-            )). \
-        filter(author=request.user).order_by('new_status', 'name', 'created_date')
+            )).\
+        filter(author=request.user, new_status=ACTIVE). \
+        order_by('name', 'created_date')
+
+    not_active_medicaments = Medicament.objects.\
+        annotate(created_date=Func(F('created_at'), function='DATE')). \
+        annotate(
+            new_status=Case(
+                When(status=active_status_id, then=Value(ACTIVE)),
+                default=Value(NOT_ACTIVE),
+                output_field=IntegerField()
+            )).\
+        filter(author=request.user, new_status=NOT_ACTIVE). \
+        order_by('-created_date', 'name')
+
+    total_dataset = list(active_medicaments) + list(not_active_medicaments)
 
     data = {'data': [
         [
@@ -53,7 +70,7 @@ def get_medicaments(request):
             item.result,
             None
         ]
-        for item in medicaments
+        for item in total_dataset
     ]}
     return JsonResponse(data, safe=False)
 
@@ -85,6 +102,10 @@ def save_medicament(request):
         if request.POST.get('use-up-date'):
             use_up_date = datetime.datetime.strptime(request.POST['use-up-date'], "%d.%m.%Y")
 
+        comment = None
+        if request.POST.get('comment'):
+            comment = request.POST['comment']
+
         form = MedicamentForm(request.POST)
         medicament = form.save(commit=False)
         if new_photo_face_name:
@@ -99,6 +120,8 @@ def save_medicament(request):
             medicament.opening_date = opening_date
         if use_up_date:
             medicament.use_up_date = use_up_date
+        if comment:
+            medicament.comment = comment
 
         medicament.author = request.user
         medicament.save()

@@ -52,6 +52,8 @@
 
     $('#add-new-medicament').on( 'click', function () {
         $('#expire-date-picker').data("DateTimePicker").date(new Date());
+        $('#opening-date-picker').data("DateTimePicker").date(new Date());
+        $('#use-up-date-picker').data("DateTimePicker").date(new Date());
     });
 
     var tbl = $('#medicaments-table').DataTable({

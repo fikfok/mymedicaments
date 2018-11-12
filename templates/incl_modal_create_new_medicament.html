@@ -55,48 +55,43 @@
                             <tr>
                                 <td>Годен до:</td>
                                 <td>
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <div class="input-group">
-                                                <span class="input-group-addon">
-                                                    <span class="glyphicon glyphicon-calendar"></span>
-                                                </span>
-                                                <input type='text' class="form-control" id="expire-date-picker" name="expire-date"/>
-                                            </div>
-                                        </div>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                        <input type='text' class="form-control" id="expire-date-picker" name="expire-date"/>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
                                 <td>Открыт:</td>
                                 <td>
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <div class="input-group">
-                                                <span class="input-group-addon">
-                                                    <span class="glyphicon glyphicon-calendar"></span>
-                                                </span>
-                                                <input type='text' class="form-control" id="opening-date-picker" name="opening-date"/>
-                                            </div>
-                                        </div>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                        <input type='text' class="form-control" id="opening-date-picker" name="opening-date"/>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
                                 <td>Испол-ь до:</td>
                                 <td>
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <div class="input-group">
-                                                <span class="input-group-addon">
-                                                    <span class="glyphicon glyphicon-calendar"></span>
-                                                </span>
-                                                <input type='text' class="form-control" id="use-up-date-picker" name="use-up-date"/>
-                                            </div>
-                                        </div>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                        <input type='text' class="form-control" id="use-up-date-picker" name="use-up-date"/>
                                     </div>
                                 </td>
                             </tr>
+                            <tr>
+                                <td>Комментарий:</td>
+                                <td>
+                                    <textarea class="form-control form-control-sm" id="comment" name="comment" rows="4"></textarea>
+                                </td>
+                            </tr>
+
                         </tbody>
                     </table>
                 </div>
@@ -172,6 +167,7 @@
         data.append('expire-date', $('#expire-date-picker').val());
         data.append('opening-date', $('#opening-date-picker').val());
         data.append('use-up-date', $('#use-up-date-picker').val());
+        data.append('comment', $('#comment').val());
 
         $.ajax({
             method:'POST',
