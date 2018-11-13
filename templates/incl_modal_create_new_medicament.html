@@ -15,33 +15,33 @@
                             <tr>
                                 <td>Название:</td>
                                 <td>
-                                    <input type="text" id='medicament-name' class="form-control form-control-sm" name="medicament-name">
+                                    <input type="text" id='medicament-name' class="form-control form-control-sm" name="name">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Цена:</td>
                                 <td>
-                                    <input type="text" id='medicament-price' class="form-control form-control-sm" name="medicament-price">
+                                    <input type="text" id='medicament-price' class="form-control form-control-sm" name="price">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Фото упаковки:</td>
                                 <td>
-                                    <input id="input-photo-face" type="file" name="photo-face" accept="image/*" capture>
+                                    <input id="input-photo-face" type="file" name="photo_face" accept="image/*" capture>
                                     <img id="photo-face" style="visibility: hidden; width: 0px; height: 0px">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Фото даты:</td>
                                 <td>
-                                    <input id="input-photo-date" type="file" name="photo-date" accept="image/*" capture>
+                                    <input id="input-photo-date" type="file" name="photo_date" accept="image/*" capture>
                                     <img id="photo-date" style="visibility: hidden; width: 0px; height: 0px">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Фото рецепта:</td>
                                 <td>
-                                    <input id="input-photo-recipe" type="file" name="photo-recipe" accept="image/*" capture>
+                                    <input id="input-photo-recipe" type="file" name="photo_recipe" accept="image/*" capture>
                                     <img id="photo-recipe" style="visibility: hidden; width: 0px; height: 0px">
                                 </td>
                             </tr>
@@ -59,7 +59,7 @@
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
-                                        <input type='text' class="form-control" id="expire-date-picker" name="expire-date"/>
+                                        <input type='text' class="form-control" id="expire-date-picker" name="expire_date"/>
                                     </div>
                                 </td>
                             </tr>
@@ -70,7 +70,7 @@
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
-                                        <input type='text' class="form-control" id="opening-date-picker" name="opening-date"/>
+                                        <input type='text' class="form-control" id="opening-date-picker" name="opening_date"/>
                                     </div>
                                 </td>
                             </tr>
@@ -81,7 +81,7 @@
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
-                                        <input type='text' class="form-control" id="use-up-date-picker" name="use-up-date"/>
+                                        <input type='text' class="form-control" id="use-up-date-picker" name="use_up_date"/>
                                     </div>
                                 </td>
                             </tr>
@@ -91,7 +91,6 @@
                                     <textarea class="form-control form-control-sm" id="comment" name="comment" rows="4"></textarea>
                                 </td>
                             </tr>
-
                         </tbody>
                     </table>
                 </div>
@@ -184,7 +183,7 @@
                 makeHiddenInputFile($('#photo-recipe'));
             },
             error: function(resp) {
-                console.log('Ajax Error', r);
+                console.log('Ajax Error', resp);
             }
         });
     });

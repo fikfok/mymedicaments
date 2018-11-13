@@ -28,11 +28,11 @@ class Result(models.Model):
 
 
 class Medicament(models.Model):
-    name = models.CharField(verbose_name='Название препарата', max_length=500)
+    name = models.CharField(verbose_name='Название препарата', blank=True, null=True, max_length=500)
     photo_face = models.FileField(verbose_name='Фото упаковки', blank=True, null=True)
     photo_date = models.FileField(verbose_name='Фото дат на упаковке', blank=True, null=True)
     photo_recipe = models.FileField(verbose_name='Фото рецепта', blank=True, null=True)
-    price = models.FloatField(verbose_name='Цена', null=True)
+    price = models.FloatField(verbose_name='Цена', blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=DEFAULT_CATEGORY, verbose_name='Категория', null=True, blank=True)
     result = models.ForeignKey(Result, on_delete=models.CASCADE, verbose_name='Результат приёма', null=True, blank=True)
     expiration_date = models.DateField(verbose_name='Годен до', blank=True, null=True)

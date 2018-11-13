@@ -64,10 +64,10 @@ def get_medicaments(request):
             item.expiration_date.strftime('%d.%m.%Y') if item.expiration_date else None,
             item.opening_date.strftime('%d.%m.%Y') if item.opening_date else None,
             item.use_up_date.strftime('%d.%m.%Y') if item.use_up_date else None,
+            item.result.name if item.result else None,
             item.comment,
             item.status.name,
             True if item.status_id == active_status_id else False,
-            item.result,
             None
         ]
         for item in total_dataset
@@ -78,6 +78,8 @@ def get_medicaments(request):
 @login_required
 def save_medicament(request):
     if request.method == 'POST':
+        data = {}
+
         new_photo_face_name = None
         if request.FILES.get('photo-face'):
             new_photo_face_name = save_photo_file(request_file=request.FILES['photo-face'])
@@ -107,25 +109,30 @@ def save_medicament(request):
             comment = request.POST['comment']
 
         form = MedicamentForm(request.POST)
-        medicament = form.save(commit=False)
-        if new_photo_face_name:
-            medicament.photo_face = new_photo_face_name
-        if new_photo_date_name:
-            medicament.photo_date = new_photo_date_name
-        if new_photo_recipe_name:
-            medicament.photo_recipe = new_photo_recipe_name
-        if expire_date:
-            medicament.expiration_date = expire_date
-        if opening_date:
-            medicament.opening_date = opening_date
-        if use_up_date:
-            medicament.use_up_date = use_up_date
-        if comment:
-            medicament.comment = comment
+        if form.is_valid():
+            medicament = form.save(commit=False)
+            if new_photo_face_name:
+                medicament.photo_face = new_photo_face_name
+            if new_photo_date_name:
+                medicament.photo_date = new_photo_date_name
+            if new_photo_recipe_name:
+                medicament.photo_recipe = new_photo_recipe_name
+            if expire_date:
+                medicament.expiration_date = expire_date
+            if opening_date:
+                medicament.opening_date = opening_date
+            if use_up_date:
+                medicament.use_up_date = use_up_date
+            if comment:
+                medicament.comment = comment
 
-        medicament.author = request.user
-        medicament.save()
-    return JsonResponse({}, safe=False)
+            medicament.author = request.user
+            medicament.save()
+            data['status'] = 'ok'
+        else:
+            data['status'] = 'error'
+            data['errors '] = [{'field_name': error[0][0], 'message': error[0][1]} for error in list(form.errors.items())]
+    return JsonResponse(data, safe=False)
 
 
 @login_required

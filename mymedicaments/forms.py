@@ -25,3 +25,13 @@ class MedicamentForm(forms.ModelForm):
         widgets = {
             'status': RadioSelect,
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        name = cleaned_data.get('name')
+        photo_face = cleaned_data.get('photo_face')
+
+        if not name and not photo_face:
+            msg = 'Должно быть введено или название или сделан снимок упаковки'
+            self.add_error('name', msg)
+            self.add_error('photo_face', msg)
