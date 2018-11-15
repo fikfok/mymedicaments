@@ -131,7 +131,7 @@ def save_medicament(request):
             data['status'] = 'ok'
         else:
             data['status'] = 'error'
-            data['errors '] = [{'field_name': error[0][0], 'message': error[0][1]} for error in list(form.errors.items())]
+            data['errors'] = [{'field_name': error[0], 'message': error[1][0]} for error in list(form.errors.items())]
     return JsonResponse(data, safe=False)
 
 

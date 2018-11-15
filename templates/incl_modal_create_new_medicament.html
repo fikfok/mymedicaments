@@ -95,7 +95,7 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-window-creation">Закрыть</button>
+                    <button type="button" class="btn btn-secondary" id="close-window-creation">Закрыть</button>
                     <button type="submit" class="btn btn-primary" id="save-medicament" value="save-medicament">Сохранить</button>
                 </div>
             </form>
@@ -154,7 +154,11 @@
         }
     });
 
-    $('#save-medicament').on('click', function( event ) {
+    $('#close-window-creation').on('click', function(event) {
+        $('#exampleModal .close').click()
+    });
+
+    $('#save-medicament').on('click', function(event) {
         event.preventDefault();
         var data = new FormData();
         data.append('name', $('#medicament-name').val());
@@ -175,12 +179,22 @@
             processData: false,
             contentType: false,
             success: function(resp){
-                $('#close-window-creation').click();
-                $('#medicaments-table').DataTable().ajax.reload();
-                $('#create-medicament-form')[0].reset();
-                makeHiddenInputFile($('#photo-face'));
-                makeHiddenInputFile($('#photo-date'));
-                makeHiddenInputFile($('#photo-recipe'));
+                if(resp.status === 'error') {
+                    $.each(resp.errors, function(key, error) {
+                        $('input[name="' + error.field_name + '"]').addClass('form-control-error');
+                    });
+                } else {
+
+                    $('#close-window-creation').click();
+                    $('#medicaments-table').DataTable().ajax.reload();
+                    $('#create-medicament-form')[0].reset();
+                    makeHiddenInputFile($('#photo-face'));
+                    makeHiddenInputFile($('#photo-date'));
+                    makeHiddenInputFile($('#photo-recipe'));
+
+                    {#$('#exampleModal .close').click();#}
+                }
+
             },
             error: function(resp) {
                 console.log('Ajax Error', resp);
