@@ -180,11 +180,20 @@
             contentType: false,
             success: function(resp){
                 if(resp.status === 'error') {
+
+                    $('.form-control-error-msg').remove();
+                    $.each($('.form-control-error'), function (key, element) {
+                        $(element).removeClass('form-control-error');
+                    });
+
                     $.each(resp.errors, function(key, error) {
-                        $('input[name="' + error.field_name + '"]').addClass('form-control-error');
+                        if (!$('[name="' + error.field_name + '"]').hasClass('form-control-error')){
+                            $('[name="' + error.field_name + '"]').addClass('form-control-error');
+                            var errorMsg = '<p class="form-control-error-msg">' + error.message + '</p>';
+                            $($('[name="' + error.field_name + '"]')).parent().append(errorMsg)
+                        }
                     });
                 } else {
-
                     $('#close-window-creation').click();
                     $('#medicaments-table').DataTable().ajax.reload();
                     $('#create-medicament-form')[0].reset();
@@ -192,9 +201,11 @@
                     makeHiddenInputFile($('#photo-date'));
                     makeHiddenInputFile($('#photo-recipe'));
 
-                    {#$('#exampleModal .close').click();#}
+                    $('.form-control-error-msg').remove();
+                    $.each($('.form-control-error'), function (key, element) {
+                        $(element).removeClass('form-control-error');
+                    });
                 }
-
             },
             error: function(resp) {
                 console.log('Ajax Error', resp);
