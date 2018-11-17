@@ -1,9 +1,11 @@
 {% csrf_token %}
 
+{% include 'incl_modal_edit_medicament.html' %}
+
 <div class="col-md-12">
     <div class="row">
         {% include 'incl_modal_create_new_medicament.html' %}
-        <button id="add-new-medicament" class="btn btn-success btn-sm" data-toggle="modal" data-target="#exampleModal">Добавить медикамент</button>
+        <button id="add-new-medicament" class="btn btn-success btn-sm" data-toggle="modal" data-target="#createModal">Добавить медикамент</button>
     </div>
     <div class="row top-buffer">
         <table id="medicaments-table" class="display compact table-bordered" style="width:100%"></table>
@@ -18,9 +20,18 @@
         }
     });
 
-    var buttonMarkAsUsed = '<button type="button" class="btn btn-danger btn-sm">Израсх.</button>';
+    var buttonMarkAsUsed = '<button type="button" class="btn btn-danger btn-sm used-up">Израсх.</button>';
+    var buttonEdit = '<button type="button" class="btn btn-success btn-sm edit">Править</button>';
 
-    $('#medicaments-table').on( 'click', 'button', function () {
+    $('#medicaments-table').on( 'click', 'button.edit', function () {
+        var currentRow = $(this).closest('tr')[0];
+        var id = $(currentRow).attr('id').replace('id', '');
+        var url = "{% url 'update_medicament' medicament_id=0 %}";
+        var data = {};
+        
+    });
+
+    $('#medicaments-table').on( 'click', 'button.used-up', function () {
         var currentRow = $(this).closest('tr')[0];
         var id = $(currentRow).attr('id').replace('id', '');
         var url = "{% url 'update_medicament' medicament_id=0 %}";
@@ -63,17 +74,17 @@
                 searchable: false
             },
             {title: 'Название'},
-            {title: 'Цена'},
-            {title: 'Категория'},
-            {title: 'Фото упак.', render: imageTemplateRenderer},
-            {title: 'Фото даты', render: imageTemplateRenderer},
-            {title: 'Фото рец.', render: imageTemplateRenderer},
-            {title: 'Дата созд.'},
-            {title: 'Годен до'},
-            {title: 'Открыт'},
-            {title: 'Испол-ь до'},
-            {title: 'Результат'},
-            {title: 'Ком-ий'},
+            {title: 'Цена', width: 50},
+            {title: 'Категория', visible: false},
+            {title: 'Фото упак.', render: imageTemplateRenderer, width: 80},
+            {title: 'Фото даты', render: imageTemplateRenderer, width: 80},
+            {title: 'Фото рец.', render: imageTemplateRenderer, width: 80},
+            {title: 'Дата созд.', visible: false},
+            {title: 'Годен до', width: 80},
+            {title: 'Открыт', visible: false},
+            {title: 'Испол-ь до', width: 80},
+            {title: 'Результат', visible: false},
+            {title: 'Ком-ий', visible: false},
             {
                 title: 'Статус',
                 visible: false,
@@ -86,19 +97,21 @@
             },
             {
                 title: 'Израс-ан',
+                width: 80,
                 targets: -1,
                 data: null,
                 render: function (data, type, row, meta) {
-                    var status_active = row[13];
+                    var status_active = row[14];
                     return status_active ? buttonMarkAsUsed: row[12];
                 }
             },
             {
                 title: 'Править',
+                width: 80,
                 targets: -1,
                 data: null,
-                defaultContent: buttonMarkAsUsed
-            },
+                defaultContent: buttonEdit
+            }
 
         ],
 {#            paging: false,#}

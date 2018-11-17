@@ -30,13 +30,8 @@ class MedicamentForm(forms.ModelForm):
         cleaned_data = super().clean()
         name = cleaned_data.get('name')
         photo_face = cleaned_data.get('photo_face')
-        category = cleaned_data.get('category')
 
         if not name and not photo_face:
             msg = 'Необходимо ввести название или сделать снимок упаковки'
             self.add_error('name', msg)
             self.add_error('photo_face', msg)
-
-        if category.name == 'Пусто':
-            msg = 'Необходимо указать категорию'
-            self.add_error('category', msg)
