@@ -144,10 +144,12 @@ def get_categories(request):
 @login_required
 def update_medicament(request, medicament_id):
     if request.method == 'PATCH':
-        medicament = get_object_or_404(Medicament, pk=medicament_id)
+        medicament = get_object_or_404(Medicament, pk=medicament_id, author=request.user)
         data = json.loads(request.body.decode("utf-8"))
         if 'used_up' in data:
             medicament.status = Status.objects.get(name='Израсходован')
+        if 'name' in data:
+            medicament.name = data['name']
         medicament.save()
     return JsonResponse({}, safe=False)
 
@@ -164,3 +166,28 @@ def save_photo_file(request_file):
     destination.close()
     return file_name + ext
 
+
+@login_required
+def get_medicament_data(request, medicament_id):
+    base_url = request.build_absolute_uri().replace(request.get_full_path(), '')
+    medicament_data = Medicament.objects.\
+        annotate(created_date=Func(F('created_at'), function='DATE')). \
+        get(author=request.user, pk=medicament_id)
+
+    data = {
+        'pk': medicament_data.pk,
+        'name': medicament_data.name,
+        'price': medicament_data.price,
+        'category_name': medicament_data.category.name,
+        'photo_face': base_url + medicament_data.photo_face.url if medicament_data.photo_face.name else None,
+        'photo_date': base_url + medicament_data.photo_date.url if medicament_data.photo_date.name else None,
+        'photo_recipe': base_url + medicament_data.photo_recipe.url if medicament_data.photo_recipe.name else None,
+        'created_date': medicament_data.created_date.strftime('%d.%m.%Y'),
+        'expiration_date': medicament_data.expiration_date.strftime('%d.%m.%Y') if medicament_data.expiration_date else None,
+        'opening_date': medicament_data.opening_date.strftime('%d.%m.%Y') if medicament_data.opening_date else None,
+        'use_up_date': medicament_data.use_up_date.strftime('%d.%m.%Y') if medicament_data.use_up_date else None,
+        'result': medicament_data.result.name if medicament_data.result else None,
+        'comment': medicament_data.comment,
+        'status_name': medicament_data.status.name
+    }
+    return JsonResponse(data, safe=False)

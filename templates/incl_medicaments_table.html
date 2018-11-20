@@ -1,6 +1,6 @@
 {% csrf_token %}
 
-{% include 'incl_modal_edit_medicament.html' %}
+{#{% include 'incl_modal_edit_medicament.html' %}#}
 
 <div class="col-md-12">
     <div class="row">
@@ -21,13 +21,28 @@
     });
 
     var buttonMarkAsUsed = '<button type="button" class="btn btn-danger btn-sm used-up">Израсх.</button>';
-    var buttonEdit = '<button type="button" class="btn btn-success btn-sm edit">Править</button>';
+    var buttonEdit = '<button type="button" class="btn btn-success btn-sm edit" data-toggle="modal" data-target="#createModal">Править</button>';
+    var medicamentAction = null;
 
-    $('#medicaments-table').on( 'click', 'button.edit', function () {
+    $('#medicaments-table').on( 'click', 'button.edit', function (evt) {
+        $('#createModalLabel').text('');
         var currentRow = $(this).closest('tr')[0];
         var id = $(currentRow).attr('id').replace('id', '');
-        var url = "{% url 'update_medicament' medicament_id=0 %}";
-        var data = {};
+        var url = "{% url 'get_medicament_data' medicament_id=0 %}".replace(/0$/, "") + id.toString();
+
+        $.ajax({
+        type: 'GET',
+        url: url,
+        success: function(resp){
+            medicamentAction = 'edit';
+            $('#createModalLabel').text('Правка медикамента "' + resp.name + '"');
+            $('#medicament-name').val(resp.name);
+            $('#medicament-price').val(resp.price);
+        },
+        error: function(resp) {
+            console.log('Ajax Error', resp);
+        }
+    });
         
     });
 
@@ -60,6 +75,9 @@
     };
 
     $('#add-new-medicament').on( 'click', function () {
+        medicamentAction = 'create';
+        $('#create-medicament-form')[0].reset();
+        $('#createModalLabel').text('Создание нового медикамента');
         $('#expire-date-picker').data("DateTimePicker").date(new Date());
         $('#opening-date-picker').data("DateTimePicker").date(new Date());
         $('#use-up-date-picker').data("DateTimePicker").date(new Date());

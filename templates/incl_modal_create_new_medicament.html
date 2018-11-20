@@ -1,9 +1,9 @@
-<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form action="{% url 'save_medicament' %}" method="post" enctype="multipart/form-data" id="create-medicament-form">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Создание нового медикамента</h5>
+                    <h5 class="modal-title" id="createModalLabel"></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -172,45 +172,49 @@
         data.append('use-up-date', $('#use-up-date-picker').val());
         data.append('comment', $('#comment').val());
 
-        $.ajax({
-            method:'POST',
-            url: "{% url 'save_medicament' %}",
-            data: data,
-            processData: false,
-            contentType: false,
-            success: function(resp){
-                if(resp.status === 'error') {
+        if (medicamentAction === 'create') {
+            $.ajax({
+                method:'POST',
+                url: "{% url 'save_medicament' %}",
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function(resp){
+                    if(resp.status === 'error') {
 
-                    $('.form-control-error-msg').remove();
-                    $.each($('.form-control-error'), function (key, element) {
-                        $(element).removeClass('form-control-error');
-                    });
+                        $('.form-control-error-msg').remove();
+                        $.each($('.form-control-error'), function (key, element) {
+                            $(element).removeClass('form-control-error');
+                        });
 
-                    $.each(resp.errors, function(key, error) {
-                        if (!$('[name="' + error.field_name + '"]').hasClass('form-control-error')){
-                            $('[name="' + error.field_name + '"]').addClass('form-control-error');
-                            var errorMsg = '<p class="form-control-error-msg">' + error.message + '</p>';
-                            $($('[name="' + error.field_name + '"]')).parent().append(errorMsg)
-                        }
-                    });
-                } else {
-                    $('#close-window-creation').click();
-                    $('#medicaments-table').DataTable().ajax.reload();
-                    $('#create-medicament-form')[0].reset();
-                    makeHiddenInputFile($('#photo-face'));
-                    makeHiddenInputFile($('#photo-date'));
-                    makeHiddenInputFile($('#photo-recipe'));
+                        $.each(resp.errors, function(key, error) {
+                            if (!$('[name="' + error.field_name + '"]').hasClass('form-control-error')){
+                                $('[name="' + error.field_name + '"]').addClass('form-control-error');
+                                var errorMsg = '<p class="form-control-error-msg">' + error.message + '</p>';
+                                $($('[name="' + error.field_name + '"]')).parent().append(errorMsg)
+                            }
+                        });
+                    } else {
+                        $('#close-window-creation').click();
+                        $('#medicaments-table').DataTable().ajax.reload();
+                        $('#create-medicament-form')[0].reset();
+                        makeHiddenInputFile($('#photo-face'));
+                        makeHiddenInputFile($('#photo-date'));
+                        makeHiddenInputFile($('#photo-recipe'));
 
-                    $('.form-control-error-msg').remove();
-                    $.each($('.form-control-error'), function (key, element) {
-                        $(element).removeClass('form-control-error');
-                    });
+                        $('.form-control-error-msg').remove();
+                        $.each($('.form-control-error'), function (key, element) {
+                            $(element).removeClass('form-control-error');
+                        });
+                    }
+                },
+                error: function(resp) {
+                    console.log('Ajax Error', resp);
                 }
-            },
-            error: function(resp) {
-                console.log('Ajax Error', resp);
-            }
-        });
+            });
+        } else if (medicamentAction === 'edit') {
+            console.log('edit')
+        }
     });
 
     $.ajax({
