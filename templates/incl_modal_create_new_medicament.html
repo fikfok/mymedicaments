@@ -158,8 +158,38 @@
         $('#createModal .close').click()
     });
 
+    var closeModalWindowAfterSuccess = function() {
+        $('#close-window-creation').click();
+        $('#medicaments-table').DataTable().ajax.reload();
+        $('#create-medicament-form')[0].reset();
+        makeHiddenInputFile($('#photo-face'));
+        makeHiddenInputFile($('#photo-date'));
+        makeHiddenInputFile($('#photo-recipe'));
+
+        $('.form-control-error-msg').remove();
+        $.each($('.form-control-error'), function (key, element) {
+            $(element).removeClass('form-control-error');
+        });
+    };
+
+    var processErrorsAfterFailure = function(errors) {
+        $('.form-control-error-msg').remove();
+        $.each($('.form-control-error'), function (key, element) {
+            $(element).removeClass('form-control-error');
+        });
+
+        $.each(errors, function(key, error) {
+            if (!$('[name="' + error.field_name + '"]').hasClass('form-control-error')){
+                $('[name="' + error.field_name + '"]').addClass('form-control-error');
+                var errorMsg = '<p class="form-control-error-msg">' + error.message + '</p>';
+                $($('[name="' + error.field_name + '"]')).parent().append(errorMsg)
+            }
+        });
+    };
+
     $('#save-medicament').on('click', function(event) {
         event.preventDefault();
+        var url = '';
         var data = new FormData();
         data.append('name', $('#medicament-name').val());
         data.append('price', $('#medicament-price').val());
@@ -173,39 +203,18 @@
         data.append('comment', $('#comment').val());
 
         if (medicamentAction === 'create') {
+            url = "{% url 'save_medicament' %}";
             $.ajax({
                 method:'POST',
-                url: "{% url 'save_medicament' %}",
+                url: url,
                 data: data,
                 processData: false,
                 contentType: false,
                 success: function(resp){
                     if(resp.status === 'error') {
-
-                        $('.form-control-error-msg').remove();
-                        $.each($('.form-control-error'), function (key, element) {
-                            $(element).removeClass('form-control-error');
-                        });
-
-                        $.each(resp.errors, function(key, error) {
-                            if (!$('[name="' + error.field_name + '"]').hasClass('form-control-error')){
-                                $('[name="' + error.field_name + '"]').addClass('form-control-error');
-                                var errorMsg = '<p class="form-control-error-msg">' + error.message + '</p>';
-                                $($('[name="' + error.field_name + '"]')).parent().append(errorMsg)
-                            }
-                        });
+                        processErrorsAfterFailure(resp.errors);
                     } else {
-                        $('#close-window-creation').click();
-                        $('#medicaments-table').DataTable().ajax.reload();
-                        $('#create-medicament-form')[0].reset();
-                        makeHiddenInputFile($('#photo-face'));
-                        makeHiddenInputFile($('#photo-date'));
-                        makeHiddenInputFile($('#photo-recipe'));
-
-                        $('.form-control-error-msg').remove();
-                        $.each($('.form-control-error'), function (key, element) {
-                            $(element).removeClass('form-control-error');
-                        });
+                        closeModalWindowAfterSuccess();
                     }
                 },
                 error: function(resp) {
@@ -213,7 +222,26 @@
                 }
             });
         } else if (medicamentAction === 'edit') {
-            console.log('edit')
+            url = "{% url 'update_medicament' medicament_id=0 %}";
+            url = url.substring(0, url.length - 1) + medicamentIdEditAction.toString();
+
+            $.ajax({
+                method:'POST',
+                url: url,
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function(resp){
+                    if(resp.status === 'error') {
+                        processErrorsAfterFailure(resp.errors);
+                    } else {
+                        closeModalWindowAfterSuccess();
+                    }
+                },
+                error: function(resp) {
+                    console.log('Ajax Error', resp);
+                }
+            });
         }
     });
 

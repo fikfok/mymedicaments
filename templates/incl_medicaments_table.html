@@ -23,12 +23,13 @@
     var buttonMarkAsUsed = '<button type="button" class="btn btn-danger btn-sm used-up">Израсх.</button>';
     var buttonEdit = '<button type="button" class="btn btn-success btn-sm edit" data-toggle="modal" data-target="#createModal">Править</button>';
     var medicamentAction = null;
+    var medicamentIdEditAction = null;
 
     $('#medicaments-table').on( 'click', 'button.edit', function (evt) {
         $('#createModalLabel').text('');
         var currentRow = $(this).closest('tr')[0];
-        var id = $(currentRow).attr('id').replace('id', '');
-        var url = "{% url 'get_medicament_data' medicament_id=0 %}".replace(/0$/, "") + id.toString();
+        medicamentIdEditAction = $(currentRow).attr('id').replace('id', '');
+        var url = "{% url 'get_medicament_data' medicament_id=0 %}".replace(/0$/, "") + medicamentIdEditAction.toString();
 
         $.ajax({
         type: 'GET',
@@ -48,11 +49,11 @@
 
     $('#medicaments-table').on( 'click', 'button.used-up', function () {
         var currentRow = $(this).closest('tr')[0];
-        var id = $(currentRow).attr('id').replace('id', '');
+        medicamentIdEditAction = $(currentRow).attr('id').replace('id', '');
         var url = "{% url 'update_medicament' medicament_id=0 %}";
         var data = {used_up: true};
 
-        url = url.substring(0, url.length - 1) + id.toString();
+        url = url.substring(0, url.length - 1) + medicamentIdEditAction.toString();
         $.ajax({
             type: 'PATCH',
             url: url,
