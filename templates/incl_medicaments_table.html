@@ -31,6 +31,10 @@
         medicamentIdEditAction = $(currentRow).attr('id').replace('id', '');
         var url = "{% url 'get_medicament_data' medicament_id=0 %}".replace(/0$/, "") + medicamentIdEditAction.toString();
 
+        makeHiddenInputFile($('#photo-face'));
+        makeHiddenInputFile($('#photo-date'));
+        makeHiddenInputFile($('#photo-recipe'));
+
         $.ajax({
         type: 'GET',
         url: url,
@@ -39,6 +43,20 @@
             $('#createModalLabel').text('Правка медикамента "' + resp.name + '"');
             $('#medicament-name').val(resp.name);
             $('#medicament-price').val(resp.price);
+
+            $('#expire-date-picker').data("DateTimePicker").date(resp.expiration_date);
+            $('#opening-date-picker').data("DateTimePicker").date(resp.opening_date);
+            $('#use-up-date-picker').data("DateTimePicker").date(resp.use_up_date);
+
+            if(resp.photo_face) {
+                makeVisibleImage($('#photo-face'), resp.photo_face);
+            }
+            if (resp.photo_date) {
+                makeVisibleImage($('#photo-date'), resp.photo_date);
+            }
+            if(resp.photo_recipe) {
+                makeVisibleImage($('#photo-recipe'), resp.photo_recipe);
+            }
         },
         error: function(resp) {
             console.log('Ajax Error', resp);
@@ -55,9 +73,9 @@
 
         url = url.substring(0, url.length - 1) + medicamentIdEditAction.toString();
         $.ajax({
-            type: 'PATCH',
+            type: 'POST',
             url: url,
-            data: JSON.stringify(data),
+            data: data,
             success: function(resp){
                 $('#medicaments-table').DataTable().ajax.reload();
             },
@@ -121,7 +139,7 @@
                 data: null,
                 render: function (data, type, row, meta) {
                     var status_active = row[14];
-                    return status_active ? buttonMarkAsUsed: row[12];
+                    return status_active ? buttonMarkAsUsed: row[13];
                 }
             },
             {

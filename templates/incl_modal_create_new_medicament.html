@@ -105,8 +105,8 @@
 
 <script>
 
-    var makeVisibleImage = function(fileControl, oFREvent) {
-        fileControl.attr('src', oFREvent.target.result);
+    var makeVisibleImage = function(fileControl, src) {
+        fileControl.attr('src', src);
         fileControl.css('display', 'block');
         fileControl.width('200px');
         fileControl.height('200px');
@@ -117,6 +117,14 @@
         fileControl.width('0px');
         fileControl.height('0px');
     };
+
+    $('#createModal').on('hidden.bs.modal', function () {
+        console.log('-----------')
+    });
+
+    $('#createModal').on('hide.bs.modal', function () {
+        console.log('-----------')
+    });
 {#    -------------------------------------#}
 {#    Сохранение снимка#}
     oFReaderPhotoFace = new FileReader();
@@ -124,13 +132,13 @@
     oFReaderPhotoRecipe = new FileReader();
 
     oFReaderPhotoFace.onload = function (oFREvent) {
-        makeVisibleImage($('#photo-face'), oFREvent);
+        makeVisibleImage($('#photo-face'), oFREvent.target.result);
     };
     oFReaderPhotoDate.onload = function (oFREvent) {
-        makeVisibleImage($('#photo-date'), oFREvent);
+        makeVisibleImage($('#photo-date'), oFREvent.target.result);
     };
     oFReaderPhotoRecipe.onload = function (oFREvent) {
-        makeVisibleImage($('#photo-recipe'), oFREvent);
+        makeVisibleImage($('#photo-recipe'), oFREvent.target.result);
     };
 
     $("#input-photo-face").change(function (){

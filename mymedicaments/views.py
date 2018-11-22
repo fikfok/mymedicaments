@@ -149,65 +149,68 @@ def update_medicament(request, medicament_id):
         medicament = get_object_or_404(Medicament, pk=medicament_id, author=request.user)
         if 'used_up' in request.POST:
             medicament.status = Status.objects.get(name='Израсходован')
-
-        new_photo_face_name = None
-        if request.FILES.get('photo-face'):
-            new_photo_face_name = save_photo_file(request_file=request.FILES['photo-face'])
-
-        new_photo_date_name = None
-        if request.FILES.get('photo-date'):
-            new_photo_date_name = save_photo_file(request_file=request.FILES['photo-date'])
-
-        new_photo_recipe_name = None
-        if request.FILES.get('photo-recipe'):
-            new_photo_recipe_name = save_photo_file(request_file=request.FILES['photo-recipe'])
-
-        expire_date = None
-        if request.POST.get('expire-date'):
-            expire_date = datetime.datetime.strptime(request.POST['expire-date'], "%d.%m.%Y")
-
-        opening_date = None
-        if request.POST.get('opening-date'):
-            opening_date = datetime.datetime.strptime(request.POST['opening-date'], "%d.%m.%Y")
-
-        use_up_date = None
-        if request.POST.get('use-up-date'):
-            use_up_date = datetime.datetime.strptime(request.POST['use-up-date'], "%d.%m.%Y")
-
-        comment = None
-        if request.POST.get('comment'):
-            comment = request.POST['comment']
-
-        form = MedicamentForm(request.POST)
-        if form.is_valid():
-            # medicament = form.save(commit=False)
-            if new_photo_face_name:
-                medicament.photo_face = new_photo_face_name
-            if new_photo_date_name:
-                medicament.photo_date = new_photo_date_name
-            if new_photo_recipe_name:
-                medicament.photo_recipe = new_photo_recipe_name
-            if expire_date:
-                medicament.expiration_date = expire_date
-            if opening_date:
-                medicament.opening_date = opening_date
-            if use_up_date:
-                medicament.use_up_date = use_up_date
-            if comment:
-                medicament.comment = comment
-            if comment:
-                medicament.comment = comment
-
-            medicament.name = form.cleaned_data['name']
-
-            medicament.author = request.user
             medicament.save()
             data['status'] = 'ok'
         else:
-            data['status'] = 'error'
-            data['errors'] = [{'field_name': error[0], 'message': error[1][0]} for error in list(form.errors.items())]
+            new_photo_face_name = None
+            if request.FILES.get('photo-face'):
+                new_photo_face_name = save_photo_file(request_file=request.FILES['photo-face'])
 
-    return JsonResponse({}, safe=False)
+            new_photo_date_name = None
+            if request.FILES.get('photo-date'):
+                new_photo_date_name = save_photo_file(request_file=request.FILES['photo-date'])
+
+            new_photo_recipe_name = None
+            if request.FILES.get('photo-recipe'):
+                new_photo_recipe_name = save_photo_file(request_file=request.FILES['photo-recipe'])
+
+            expire_date = None
+            if request.POST.get('expire-date'):
+                expire_date = datetime.datetime.strptime(request.POST['expire-date'], "%d.%m.%Y")
+
+            opening_date = None
+            if request.POST.get('opening-date'):
+                opening_date = datetime.datetime.strptime(request.POST['opening-date'], "%d.%m.%Y")
+
+            use_up_date = None
+            if request.POST.get('use-up-date'):
+                use_up_date = datetime.datetime.strptime(request.POST['use-up-date'], "%d.%m.%Y")
+
+            comment = None
+            if request.POST.get('comment'):
+                comment = request.POST['comment']
+
+            form = MedicamentForm(request.POST)
+            if form.is_valid():
+                # medicament = form.save(commit=False)
+                if new_photo_face_name:
+                    medicament.photo_face = new_photo_face_name
+                if new_photo_date_name:
+                    medicament.photo_date = new_photo_date_name
+                if new_photo_recipe_name:
+                    medicament.photo_recipe = new_photo_recipe_name
+                if expire_date:
+                    medicament.expiration_date = expire_date
+                if opening_date:
+                    medicament.opening_date = opening_date
+                if use_up_date:
+                    medicament.use_up_date = use_up_date
+                if comment:
+                    medicament.comment = comment
+                if comment:
+                    medicament.comment = comment
+
+                medicament.name = form.cleaned_data['name']
+                medicament.price = form.cleaned_data['price']
+                medicament.comment = form.cleaned_data['comment']
+
+                medicament.author = request.user
+                medicament.save()
+                data['status'] = 'ok'
+            else:
+                data['status'] = 'error'
+                data['errors'] = [{'field_name': error[0], 'message': error[1][0]} for error in list(form.errors.items())]
+    return JsonResponse(data, safe=False)
 
 
 def save_photo_file(request_file):
