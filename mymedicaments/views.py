@@ -1,3 +1,4 @@
+import copy
 import datetime
 import json
 import os
@@ -79,36 +80,33 @@ def get_medicaments(request):
 def save_medicament(request):
     if request.method == 'POST':
         data = {}
+        post_data = copy.deepcopy(request.POST)
 
         new_photo_face_name = None
-        if request.FILES.get('photo-face'):
-            new_photo_face_name = save_photo_file(request_file=request.FILES['photo-face'])
+        if request.FILES.get('photo_face'):
+            new_photo_face_name = save_photo_file(request_file=request.FILES['photo_face'])
 
         new_photo_date_name = None
-        if request.FILES.get('photo-date'):
-            new_photo_date_name = save_photo_file(request_file=request.FILES['photo-date'])
+        if request.FILES.get('photo_date'):
+            new_photo_date_name = save_photo_file(request_file=request.FILES['photo_date'])
 
         new_photo_recipe_name = None
-        if request.FILES.get('photo-recipe'):
-            new_photo_recipe_name = save_photo_file(request_file=request.FILES['photo-recipe'])
+        if request.FILES.get('photo_recipe'):
+            new_photo_recipe_name = save_photo_file(request_file=request.FILES['photo_recipe'])
 
         expire_date = None
-        if request.POST.get('expire-date'):
-            expire_date = datetime.datetime.strptime(request.POST['expire-date'], "%d.%m.%Y")
+        if request.POST.get('expiration_date'):
+            expire_date = datetime.datetime.strptime(request.POST['expiration_date'], "%d.%m.%Y")
 
         opening_date = None
-        if request.POST.get('opening-date'):
-            opening_date = datetime.datetime.strptime(request.POST['opening-date'], "%d.%m.%Y")
+        if request.POST.get('opening_date'):
+            opening_date = datetime.datetime.strptime(request.POST['opening_date'], "%d.%m.%Y")
 
         use_up_date = None
-        if request.POST.get('use-up-date'):
-            use_up_date = datetime.datetime.strptime(request.POST['use-up-date'], "%d.%m.%Y")
+        if request.POST.get('use_up_dat'):
+            use_up_date = datetime.datetime.strptime(request.POST['use_up_dat'], "%d.%m.%Y")
 
-        comment = None
-        if request.POST.get('comment'):
-            comment = request.POST['comment']
-
-        form = MedicamentForm(request.POST)
+        form = MedicamentForm(data=post_data)
         if form.is_valid():
             medicament = form.save(commit=False)
             if new_photo_face_name:
@@ -123,8 +121,6 @@ def save_medicament(request):
                 medicament.opening_date = opening_date
             if use_up_date:
                 medicament.use_up_date = use_up_date
-            if comment:
-                medicament.comment = comment
 
             medicament.author = request.user
             medicament.save()
@@ -153,56 +149,57 @@ def update_medicament(request, medicament_id):
             data['status'] = 'ok'
         else:
             new_photo_face_name = None
-            if request.FILES.get('photo-face'):
-                new_photo_face_name = save_photo_file(request_file=request.FILES['photo-face'])
+            if request.FILES.get('photo_face'):
+                new_photo_face_name = save_photo_file(request_file=request.FILES['photo_face'])
 
             new_photo_date_name = None
-            if request.FILES.get('photo-date'):
-                new_photo_date_name = save_photo_file(request_file=request.FILES['photo-date'])
+            if request.FILES.get('photo_date'):
+                new_photo_date_name = save_photo_file(request_file=request.FILES['photo_date'])
 
             new_photo_recipe_name = None
-            if request.FILES.get('photo-recipe'):
-                new_photo_recipe_name = save_photo_file(request_file=request.FILES['photo-recipe'])
+            if request.FILES.get('photo_recipe'):
+                new_photo_recipe_name = save_photo_file(request_file=request.FILES['photo_recipe'])
 
             expire_date = None
-            if request.POST.get('expire-date'):
-                expire_date = datetime.datetime.strptime(request.POST['expire-date'], "%d.%m.%Y")
+            if request.POST.get('expiration_date'):
+                expire_date = datetime.datetime.strptime(request.POST['expiration_date'], "%d.%m.%Y")
 
             opening_date = None
-            if request.POST.get('opening-date'):
-                opening_date = datetime.datetime.strptime(request.POST['opening-date'], "%d.%m.%Y")
+            if request.POST.get('opening_date'):
+                opening_date = datetime.datetime.strptime(request.POST['opening_date'], "%d.%m.%Y")
 
             use_up_date = None
-            if request.POST.get('use-up-date'):
-                use_up_date = datetime.datetime.strptime(request.POST['use-up-date'], "%d.%m.%Y")
+            if request.POST.get('use_up_dat'):
+                use_up_date = datetime.datetime.strptime(request.POST['use_up_dat'], "%d.%m.%Y")
 
             comment = None
             if request.POST.get('comment'):
                 comment = request.POST['comment']
 
-            form = MedicamentForm(request.POST)
+            if new_photo_face_name:
+                medicament.photo_face = new_photo_face_name
+            if new_photo_date_name:
+                medicament.photo_date = new_photo_date_name
+            if new_photo_recipe_name:
+                medicament.photo_recipe = new_photo_recipe_name
+            if expire_date:
+                medicament.expiration_date = expire_date
+            if opening_date:
+                medicament.opening_date = opening_date
+            if use_up_date:
+                medicament.use_up_date = use_up_date
+            if comment:
+                medicament.comment = comment
+            if comment:
+                medicament.comment = comment
+
+            form = MedicamentForm(request.POST, instance=medicament)
             if form.is_valid():
                 # medicament = form.save(commit=False)
-                if new_photo_face_name:
-                    medicament.photo_face = new_photo_face_name
-                if new_photo_date_name:
-                    medicament.photo_date = new_photo_date_name
-                if new_photo_recipe_name:
-                    medicament.photo_recipe = new_photo_recipe_name
-                if expire_date:
-                    medicament.expiration_date = expire_date
-                if opening_date:
-                    medicament.opening_date = opening_date
-                if use_up_date:
-                    medicament.use_up_date = use_up_date
-                if comment:
-                    medicament.comment = comment
-                if comment:
-                    medicament.comment = comment
-
                 medicament.name = form.cleaned_data['name']
                 medicament.price = form.cleaned_data['price']
                 medicament.comment = form.cleaned_data['comment']
+                medicament.category = form.cleaned_data['category']
 
                 medicament.author = request.user
                 medicament.save()
@@ -237,7 +234,7 @@ def get_medicament_data(request, medicament_id):
         'pk': medicament_data.pk,
         'name': medicament_data.name,
         'price': medicament_data.price,
-        'category_name': medicament_data.category.name,
+        'category': medicament_data.category.pk,
         'photo_face': base_url + medicament_data.photo_face.url if medicament_data.photo_face.name else None,
         'photo_date': base_url + medicament_data.photo_date.url if medicament_data.photo_date.name else None,
         'photo_recipe': base_url + medicament_data.photo_recipe.url if medicament_data.photo_recipe.name else None,
@@ -247,6 +244,6 @@ def get_medicament_data(request, medicament_id):
         'use_up_date': medicament_data.use_up_date.strftime('%d.%m.%Y') if medicament_data.use_up_date else None,
         'result': medicament_data.result.name if medicament_data.result else None,
         'comment': medicament_data.comment,
-        'status_name': medicament_data.status.name
+        'status': medicament_data.status.name
     }
     return JsonResponse(data, safe=False)

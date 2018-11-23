@@ -43,6 +43,8 @@
             $('#createModalLabel').text('Правка медикамента "' + resp.name + '"');
             $('#medicament-name').val(resp.name);
             $('#medicament-price').val(resp.price);
+            $('#comment').val(resp.comment);
+            $('#category').val(resp.category);
 
             $('#expire-date-picker').data("DateTimePicker").date(resp.expiration_date);
             $('#opening-date-picker').data("DateTimePicker").date(resp.opening_date);
@@ -96,6 +98,12 @@
     $('#add-new-medicament').on( 'click', function () {
         medicamentAction = 'create';
         $('#create-medicament-form')[0].reset();
+
+        removeErrorsMsg();
+        makeHiddenInputFile($('#photo-face'));
+        makeHiddenInputFile($('#photo-date'));
+        makeHiddenInputFile($('#photo-recipe'));
+
         $('#createModalLabel').text('Создание нового медикамента');
         $('#expire-date-picker').data("DateTimePicker").date(new Date());
         $('#opening-date-picker').data("DateTimePicker").date(new Date());
