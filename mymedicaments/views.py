@@ -82,10 +82,6 @@ def save_medicament(request):
         data = {}
         post_data = copy.deepcopy(request.POST)
 
-        new_photo_face_name = None
-        if request.FILES.get('photo_face'):
-            new_photo_face_name = save_photo_file(request_file=request.FILES['photo_face'])
-
         new_photo_date_name = None
         if request.FILES.get('photo_date'):
             new_photo_date_name = save_photo_file(request_file=request.FILES['photo_date'])
@@ -94,33 +90,13 @@ def save_medicament(request):
         if request.FILES.get('photo_recipe'):
             new_photo_recipe_name = save_photo_file(request_file=request.FILES['photo_recipe'])
 
-        expire_date = None
-        if request.POST.get('expiration_date'):
-            expire_date = datetime.datetime.strptime(request.POST['expiration_date'], "%d.%m.%Y")
-
-        opening_date = None
-        if request.POST.get('opening_date'):
-            opening_date = datetime.datetime.strptime(request.POST['opening_date'], "%d.%m.%Y")
-
-        use_up_date = None
-        if request.POST.get('use_up_dat'):
-            use_up_date = datetime.datetime.strptime(request.POST['use_up_dat'], "%d.%m.%Y")
-
-        form = MedicamentForm(data=post_data)
+        form = MedicamentForm(data=post_data, files=request.FILES)
         if form.is_valid():
             medicament = form.save(commit=False)
-            if new_photo_face_name:
-                medicament.photo_face = new_photo_face_name
             if new_photo_date_name:
                 medicament.photo_date = new_photo_date_name
             if new_photo_recipe_name:
                 medicament.photo_recipe = new_photo_recipe_name
-            if expire_date:
-                medicament.expiration_date = expire_date
-            if opening_date:
-                medicament.opening_date = opening_date
-            if use_up_date:
-                medicament.use_up_date = use_up_date
 
             medicament.author = request.user
             medicament.save()
