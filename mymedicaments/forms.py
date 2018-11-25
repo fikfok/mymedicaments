@@ -14,7 +14,10 @@ PATH = settings.MEDIA_ROOT + '/'
 
 class CustomDateField(forms.Field):
     def to_python(self, value):
-        return datetime.strptime(value, "%d.%m.%Y")
+        converted_date = None
+        if value:
+            converted_date = datetime.strptime(value, "%d.%m.%Y")
+        return converted_date
 
 
 class MedicamentForm(forms.ModelForm):
@@ -46,7 +49,6 @@ class MedicamentForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         name = cleaned_data.get('name')
-        # photo_face = cleaned_data.get('photo_face')
         photo_face = self.files.get('photo_face')
 
         if not name and not photo_face:
@@ -54,15 +56,35 @@ class MedicamentForm(forms.ModelForm):
             self.add_error('name', msg)
             self.add_error('photo_face', msg)
 
+        if not cleaned_data.get('expiration_date'):
+            cleaned_data['expiration_date'] = None
+        return cleaned_data
+
     def clean_photo_face(self):
-        original_file_name = self.cleaned_data['photo_face']
-        file_name = str(uuid.uuid4())
-        photo_face = original_file_name
-        path = PATH + '/'
-        ext = os.path.splitext(photo_face.name)[-1].lower()
-        absolut_path = path + file_name + ext
+        new_file_name = None
+        if self.cleaned_data['photo_face']:
+            new_file_name = self._save_image(original_file_name=self.cleaned_data['photo_face'])
+        return new_file_name
+
+    def clean_photo_date(self):
+        new_file_name = None
+        if self.cleaned_data['photo_date']:
+            new_file_name = self._save_image(original_file_name=self.cleaned_data['photo_date'])
+        return new_file_name
+
+    def clean_photo_recipe(self):
+        new_file_name = None
+        if self.cleaned_data['photo_recipe']:
+            new_file_name = self._save_image(original_file_name=self.cleaned_data['photo_recipe'])
+        return new_file_name
+
+    def _save_image(self, original_file_name):
+        new_file_name = str(uuid.uuid4())
+        path = PATH
+        ext = os.path.splitext(original_file_name.name)[-1].lower()
+        absolut_path = path + new_file_name + ext
         destination = open(absolut_path, 'wb+')
-        for chunk in photo_face.chunks():
+        for chunk in original_file_name.chunks():
             destination.write(chunk)
         destination.close()
-        return file_name + ext
+        return new_file_name + ext

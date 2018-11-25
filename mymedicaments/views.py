@@ -1,6 +1,5 @@
 import copy
 import datetime
-import json
 import os
 import uuid
 
@@ -37,7 +36,7 @@ def get_medicaments(request):
                 output_field=IntegerField()
             )).\
         filter(author=request.user, new_status=ACTIVE). \
-        order_by('name', 'created_date')
+        order_by('-created_date', '-pk')
 
     not_active_medicaments = Medicament.objects.\
         annotate(created_date=Func(F('created_at'), function='DATE')). \
@@ -81,23 +80,9 @@ def save_medicament(request):
     if request.method == 'POST':
         data = {}
         post_data = copy.deepcopy(request.POST)
-
-        new_photo_date_name = None
-        if request.FILES.get('photo_date'):
-            new_photo_date_name = save_photo_file(request_file=request.FILES['photo_date'])
-
-        new_photo_recipe_name = None
-        if request.FILES.get('photo_recipe'):
-            new_photo_recipe_name = save_photo_file(request_file=request.FILES['photo_recipe'])
-
         form = MedicamentForm(data=post_data, files=request.FILES)
         if form.is_valid():
             medicament = form.save(commit=False)
-            if new_photo_date_name:
-                medicament.photo_date = new_photo_date_name
-            if new_photo_recipe_name:
-                medicament.photo_recipe = new_photo_recipe_name
-
             medicament.author = request.user
             medicament.save()
             data['status'] = 'ok'
@@ -124,54 +109,8 @@ def update_medicament(request, medicament_id):
             medicament.save()
             data['status'] = 'ok'
         else:
-            new_photo_face_name = None
-            if request.FILES.get('photo_face'):
-                new_photo_face_name = save_photo_file(request_file=request.FILES['photo_face'])
-
-            new_photo_date_name = None
-            if request.FILES.get('photo_date'):
-                new_photo_date_name = save_photo_file(request_file=request.FILES['photo_date'])
-
-            new_photo_recipe_name = None
-            if request.FILES.get('photo_recipe'):
-                new_photo_recipe_name = save_photo_file(request_file=request.FILES['photo_recipe'])
-
-            expire_date = None
-            if request.POST.get('expiration_date'):
-                expire_date = datetime.datetime.strptime(request.POST['expiration_date'], "%d.%m.%Y")
-
-            opening_date = None
-            if request.POST.get('opening_date'):
-                opening_date = datetime.datetime.strptime(request.POST['opening_date'], "%d.%m.%Y")
-
-            use_up_date = None
-            if request.POST.get('use_up_dat'):
-                use_up_date = datetime.datetime.strptime(request.POST['use_up_dat'], "%d.%m.%Y")
-
-            comment = None
-            if request.POST.get('comment'):
-                comment = request.POST['comment']
-
-            if new_photo_face_name:
-                medicament.photo_face = new_photo_face_name
-            if new_photo_date_name:
-                medicament.photo_date = new_photo_date_name
-            if new_photo_recipe_name:
-                medicament.photo_recipe = new_photo_recipe_name
-            if expire_date:
-                medicament.expiration_date = expire_date
-            if opening_date:
-                medicament.opening_date = opening_date
-            if use_up_date:
-                medicament.use_up_date = use_up_date
-            if comment:
-                medicament.comment = comment
-            if comment:
-                medicament.comment = comment
-
-            form = MedicamentForm(request.POST, instance=medicament)
+            form = MedicamentForm(data=request.POST, files=request.FILES, instance=medicament)
             if form.is_valid():
-                # medicament = form.save(commit=False)
                 medicament.name = form.cleaned_data['name']
                 medicament.price = form.cleaned_data['price']
                 medicament.comment = form.cleaned_data['comment']
@@ -184,19 +123,6 @@ def update_medicament(request, medicament_id):
                 data['status'] = 'error'
                 data['errors'] = [{'field_name': error[0], 'message': error[1][0]} for error in list(form.errors.items())]
     return JsonResponse(data, safe=False)
-
-
-def save_photo_file(request_file):
-    file_name = str(uuid.uuid4())
-    photo_face = request_file
-    path = PATH + '/'
-    ext = os.path.splitext(photo_face.name)[-1].lower()
-    absolut_path = path + file_name + ext
-    destination = open(absolut_path, 'wb+')
-    for chunk in photo_face.chunks():
-        destination.write(chunk)
-    destination.close()
-    return file_name + ext
 
 
 @login_required

@@ -59,7 +59,7 @@
                                         <span class="input-group-addon">
                                             <span class="glyphicon glyphicon-calendar"></span>
                                         </span>
-                                        <input type='text' class="form-control" id="expire-date-picker" name="expire_date"/>
+                                        <input type='text' class="form-control" id="expire-date-picker" name="expiration_date"/>
                                     </div>
                                 </td>
                             </tr>
@@ -263,17 +263,14 @@
 
     $('#expire-date-picker').datetimepicker({
         locale: 'ru',
-        date: new Date(),
         format: 'DD.MM.YYYY'
     });
     $('#opening-date-picker').datetimepicker({
         locale: 'ru',
-        date: new Date(),
         format: 'DD.MM.YYYY'
     });
     $('#use-up-date-picker').datetimepicker({
         locale: 'ru',
-        date: new Date(),
         format: 'DD.MM.YYYY'
     });
 
