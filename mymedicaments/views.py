@@ -100,9 +100,8 @@ def get_categories(request):
 
 @login_required
 def update_medicament(request, medicament_id):
+    data = {}
     if request.method == 'POST':
-        data = {}
-
         medicament = get_object_or_404(Medicament, pk=medicament_id, author=request.user)
         if 'used_up' in request.POST:
             medicament.status = Status.objects.get(name='Израсходован')

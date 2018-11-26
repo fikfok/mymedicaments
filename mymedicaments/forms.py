@@ -46,8 +46,14 @@ class MedicamentForm(forms.ModelForm):
             'status': RadioSelect,
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['expiration_date'].required = False
+        self.fields['opening_date'].required = False
+        self.fields['use_up_date'].required = False
+
     def clean(self):
-        cleaned_data = super().clean()
+        cleaned_data = self.cleaned_data
         name = cleaned_data.get('name')
         photo_face = self.files.get('photo_face')
 
@@ -55,9 +61,6 @@ class MedicamentForm(forms.ModelForm):
             msg = 'Необходимо ввести название или сделать снимок упаковки'
             self.add_error('name', msg)
             self.add_error('photo_face', msg)
-
-        if not cleaned_data.get('expiration_date'):
-            cleaned_data['expiration_date'] = None
         return cleaned_data
 
     def clean_photo_face(self):
