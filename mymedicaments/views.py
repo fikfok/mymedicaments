@@ -110,12 +110,6 @@ def update_medicament(request, medicament_id):
         else:
             form = MedicamentForm(data=request.POST, files=request.FILES, instance=medicament)
             if form.is_valid():
-                medicament.name = form.cleaned_data['name']
-                medicament.price = form.cleaned_data['price']
-                medicament.comment = form.cleaned_data['comment']
-                medicament.category = form.cleaned_data['category']
-
-                medicament.author = request.user
                 medicament.save()
                 data['status'] = 'ok'
             else:
