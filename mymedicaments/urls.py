@@ -16,4 +16,4 @@ urlpatterns = [
     url(r'^api/save_medicament/$', views.save_medicament, name='save_medicament'),
     url(r'^api/get_categories/$', views.get_categories, name='get_categories'),
     url(r'^api/update_medicament/(?P<medicament_id>[0-9]+)$', views.update_medicament, name='update_medicament'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
