@@ -4,7 +4,6 @@ from datetime import datetime
 
 from django import forms
 from django.forms import RadioSelect
-
 from mymedicaments.models import Medicament
 from django.conf import settings
 
@@ -85,9 +84,11 @@ class MedicamentForm(forms.ModelForm):
         new_file_name = str(uuid.uuid4())
         path = PATH
         ext = os.path.splitext(original_file_name.name)[-1].lower()
-        absolut_path = path + new_file_name + ext
+        original_file_name = new_file_name + ext
+        absolut_path = path + original_file_name
         destination = open(absolut_path, 'wb+')
         for chunk in original_file_name.chunks():
             destination.write(chunk)
         destination.close()
-        return new_file_name + ext
+
+        return original_file_name
