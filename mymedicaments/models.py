@@ -1,3 +1,5 @@
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.conf import settings
@@ -6,8 +8,9 @@ from PIL import Image
 
 DEFAULT_CATEGORY = 1
 DEFAULT_STATUS = 1
-SMALL_THUMB = (60, 60)
-MEDIUM_THUMB = (200, 200)
+SMALL_THUMB_SIZE = (60, 60)
+MEDIUM_THUMB_SIZE = (200, 200)
+PATH = settings.MEDIA_ROOT + '/'
 
 
 class Category(models.Model):
@@ -59,17 +62,61 @@ class Medicament(models.Model):
     def __str__(self):
         return self.name
 
-    def save_thumbnails(self):
-        PATH = settings.MEDIA_ROOT + '/'
-        original_image = Image.open(absolut_path)
-        small_thumb = original_image.copy()
-        small_thumb.thumbnail(SMALL_THUMB)
-        small_file_name = new_file_name + '_small' + ext
-        small_thumb_path = path + small_file_name
-        small_thumb.save(small_thumb_path)
+    # def save_thumbnails(self):
+    #     PATH = settings.MEDIA_ROOT + '/'
+    #     original_image = Image.open(absolut_path)
+    #     small_thumb = original_image.copy()
+    #     small_thumb.thumbnail(SMALL_THUMB)
+    #     small_file_name = new_file_name + '_small' + ext
+    #     small_thumb_path = path + small_file_name
+    #     small_thumb.save(small_thumb_path)
+    #
+    #     medium_thumb = original_image.copy()
+    #     medium_thumb.thumbnail(MEDIUM_THUMB)
+    #     medium_file_name = new_file_name + '_medium' + ext
+    #     medium_thumb_path = path + medium_file_name
+    #     medium_thumb.save(medium_thumb_path)
 
-        medium_thumb = original_image.copy()
-        medium_thumb.thumbnail(MEDIUM_THUMB)
-        medium_file_name = new_file_name + '_medium' + ext
-        medium_thumb_path = path + medium_file_name
-        medium_thumb.save(medium_thumb_path)
+
+@receiver(pre_save, sender=Medicament)
+def save_thumbnails(sender, instance, *args, **kwargs):
+    """
+    https://stackoverflow.com/questions/10840030/django-post-save-preventing-recursion-without-overriding-model-save
+    """
+    if not instance:
+        return
+
+    if hasattr(instance, '_dirty'):
+        return
+
+    if instance.photo_face:
+        instance.photo_face_small = generate_thumbnail(instance.photo_face.name, SMALL_THUMB_SIZE, '_small')
+        instance.photo_face_medium = generate_thumbnail(instance.photo_face.name, MEDIUM_THUMB_SIZE, '_medium')
+
+    if instance.photo_date:
+        instance.photo_date_small = generate_thumbnail(instance.photo_date.name, SMALL_THUMB_SIZE, '_small')
+        instance.photo_date_medium = generate_thumbnail(instance.photo_date.name, MEDIUM_THUMB_SIZE, '_medium')
+
+    if instance.photo_recipe:
+        instance.photo_recipe_small = generate_thumbnail(instance.photo_recipe.name, SMALL_THUMB_SIZE, '_small')
+        instance.photo_recipe_medium = generate_thumbnail(instance.photo_recipe.name, MEDIUM_THUMB_SIZE, '_medium')
+
+    try:
+        instance._dirty = True
+        instance.save()
+    finally:
+        del instance._dirty
+
+
+def generate_thumbnail(original_file_name, size, post_fix):
+    ext = original_file_name.split('.')[-1].lower()
+    saved_file_name = '.'.join(original_file_name.split('.')[:-1])
+    absolut_path_to_saved_file = PATH + original_file_name
+
+    original_image = Image.open(absolut_path_to_saved_file)
+    thumb_image = original_image.copy()
+    thumb_image.thumbnail(size)
+    new_file_name = saved_file_name + post_fix + '.' + ext
+    thumb_image_path = PATH + new_file_name
+    thumb_image.save(thumb_image_path)
+    return new_file_name

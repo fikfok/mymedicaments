@@ -65,29 +65,28 @@ class MedicamentForm(forms.ModelForm):
     def clean_photo_face(self):
         new_file_name = None
         if self.cleaned_data['photo_face']:
-            new_file_name = self._save_image(original_file_name=self.cleaned_data['photo_face'])
+            new_file_name = self._save_image(source_file=self.cleaned_data['photo_face'])
         return new_file_name
 
     def clean_photo_date(self):
         new_file_name = None
         if self.cleaned_data['photo_date']:
-            new_file_name = self._save_image(original_file_name=self.cleaned_data['photo_date'])
+            new_file_name = self._save_image(source_file=self.cleaned_data['photo_date'])
         return new_file_name
 
     def clean_photo_recipe(self):
         new_file_name = None
         if self.cleaned_data['photo_recipe']:
-            new_file_name = self._save_image(original_file_name=self.cleaned_data['photo_recipe'])
+            new_file_name = self._save_image(source_file=self.cleaned_data['photo_recipe'])
         return new_file_name
 
-    def _save_image(self, original_file_name):
+    def _save_image(self, source_file):
         new_file_name = str(uuid.uuid4())
-        path = PATH
-        ext = os.path.splitext(original_file_name.name)[-1].lower()
+        ext = os.path.splitext(source_file.name)[-1].lower()
         original_file_name = new_file_name + ext
-        absolut_path = path + original_file_name
+        absolut_path = PATH + original_file_name
         destination = open(absolut_path, 'wb+')
-        for chunk in original_file_name.chunks():
+        for chunk in source_file.chunks():
             destination.write(chunk)
         destination.close()
 
