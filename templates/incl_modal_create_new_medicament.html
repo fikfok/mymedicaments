@@ -108,8 +108,10 @@
     var makeVisibleImage = function(fileControl, src) {
         fileControl.attr('src', src);
         fileControl.css('display', 'block');
-        fileControl.width('200px');
-        fileControl.height('200px');
+        fileControl.css('width', '');
+        fileControl.css('height', '');
+        fileControl.css('max-width', '200px');
+        fileControl.css('max-height', '200px');
     };
     var makeHiddenInputFile = function(fileControl) {
         fileControl.attr('src', '');
